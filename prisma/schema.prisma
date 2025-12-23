@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Models
+
+// Models
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Hashed password
+  name      String?
+  role      String     @default("CLIENT") // ADMIN, CLIENT
+  phone     String?
+  address   String?
+  balance   Decimal  @default(0) // Positive = User owes money. Negative = User has credit.
+  
+  // Retailer Surcharge
+  isRetailer         Boolean @default(false)
+  surchargePercentage Decimal @default(0)
+  
+  orders    Order[]
+  payments  Payment[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  imageUrl    String?
+  category    String? // Family
+  subcategory String? // Subgroup
+  
+  variants    ProductVariant[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProductVariant {
+  id        String  @id @default(uuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  name      String  // e.g. "S", "M", "Red"
+  price     Decimal
+  
+  orderItems OrderItem[]
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  status    String      @default("PENDING") // PENDING, CONFIRMED, IN_PRODUCTION, READY, DELIVERED, CANCELED
+  total     Decimal
+  
+  items     OrderItem[]
+  
+  notes     String?     // Notas internas o del cliente
+  
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
+  
+  quantity  Int
+  price     Decimal // Snapshot price at time of order
+  isReady   Boolean @default(false) // Track if this item is ready for delivery
+}
+
+model Payment {
+  id        String        @id @default(uuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  orderId   String?       // Optional link to specific order
+  
+  amount    Decimal
+  type      String      // DEPOSIT, PARTIAL, FULL
+  method    String      // CASH, TRANSFER, CREDIT_CARD, ...
+  
+  notes     String?
+  
+  createdAt DateTime      @default(now())
+}
