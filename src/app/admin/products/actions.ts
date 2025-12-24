@@ -7,18 +7,20 @@ export async function createProduct(formData: FormData) {
     const name = formData.get('name') as string
     const category = formData.get('category') as string
     const subcategory = formData.get('subcategory') as string
+    const basePrice = parseFloat(formData.get('basePrice') as string) || 0
     const ledSurcharge = parseFloat(formData.get('ledSurcharge') as string) || 0
+
 
     // Parse variants from form data (expected format: variant_name_0, variant_price_0, etc.)
     const variants = []
     let i = 0
     while (formData.has(`variant_name_${i}`)) {
         variants.push({
-            name: formData.get(`variant_name_${i}`) as string,
-            price: parseFloat(formData.get(`variant_price_${i}`) as string)
+            name: formData.get(`variant_name_${i}`) as string
         })
         i++
     }
+
 
     if (variants.length === 0) {
         // Fallback or error? For now allow, but UI should prevent.
@@ -29,8 +31,10 @@ export async function createProduct(formData: FormData) {
             name,
             category,
             subcategory,
+            basePrice,
             ledSurcharge,
             description: "Descripción pendiente...",
+
             variants: {
                 create: variants
             }
@@ -45,7 +49,9 @@ export async function updateProduct(formData: FormData) {
     const name = formData.get('name') as string
     const category = formData.get('category') as string
     const subcategory = formData.get('subcategory') as string
+    const basePrice = parseFloat(formData.get('basePrice') as string) || 0
     const ledSurcharge = parseFloat(formData.get('ledSurcharge') as string) || 0
+
 
     // Parse variants from form data
     const variants = []
@@ -53,11 +59,11 @@ export async function updateProduct(formData: FormData) {
     while (formData.has(`variant_name_${i}`)) {
         variants.push({
             id: formData.get(`variant_id_${i}`) as string || undefined,
-            name: formData.get(`variant_name_${i}`) as string,
-            price: parseFloat(formData.get(`variant_price_${i}`) as string)
+            name: formData.get(`variant_name_${i}`) as string
         })
         i++
     }
+
 
     // 1. Update basic info
     await prisma.product.update({
@@ -66,8 +72,10 @@ export async function updateProduct(formData: FormData) {
             name,
             category,
             subcategory,
+            basePrice,
             ledSurcharge
         }
+
     })
 
 
@@ -96,15 +104,16 @@ export async function updateProduct(formData: FormData) {
         if (v.id) {
             await prisma.productVariant.update({
                 where: { id: v.id },
-                data: { name: v.name, price: v.price }
+                data: { name: v.name }
             })
+
         } else {
             await prisma.productVariant.create({
                 data: {
                     name: v.name,
-                    price: v.price,
                     productId: id
                 }
+
             })
         }
     }
@@ -123,3 +132,36 @@ export async function deleteProduct(formData: FormData) {
         return { success: false, error: "No se puede eliminar un producto que ya tiene pedidos asociados." }
     }
 }
+
+export async function bulkUpdatePrices(formData: FormData) {
+    const category = formData.get('category') as string
+    const percentage = parseFloat(formData.get('percentage') as string)
+
+    if (!percentage || isNaN(percentage)) {
+        throw new Error('Porcentaje inválido')
+    }
+
+    const multiplier = 1 + (percentage / 100)
+
+    try {
+        const products = await prisma.product.findMany({
+            where: category && category !== 'ALL' ? { category } : {}
+        })
+
+        for (const product of products) {
+            const newPrice = Number(product.basePrice) * multiplier
+            await prisma.product.update({
+                where: { id: product.id },
+                data: { basePrice: newPrice }
+            })
+        }
+
+        revalidatePath('/admin/products')
+        return { success: true }
+    } catch (error) {
+
+        console.error("Error updating prices:", error)
+        throw error
+    }
+}
+

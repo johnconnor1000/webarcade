@@ -20,12 +20,13 @@ export default async function NewOrderPage() {
 
     const products = productsRaw.map(p => ({
         ...p,
-        // no price on product anymore
+        basePrice: p.basePrice.toNumber(),
+        ledSurcharge: p.ledSurcharge.toNumber(),
         createdAt: p.createdAt.toISOString(),
         updatedAt: p.updatedAt.toISOString(),
         variants: p.variants.map(v => ({
             ...v,
-            price: v.price.toNumber()
+            price: p.basePrice.toNumber() // Each variant defaults to the product's base price
         }))
     }));
 
@@ -33,27 +34,47 @@ export default async function NewOrderPage() {
         'use server'
         const userId = formData.get('userId') as string
         const cartJson = formData.get('cart') as string
-        const cart = JSON.parse(cartJson) as { variantId: string, quantity: number, price: number }[]
+        const cart = JSON.parse(cartJson) as {
+            variantId: string,
+            quantity: number,
+            price: number,
+            buttonsType: 'COMMON' | 'LED'
+        }[]
 
         const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0)
 
         // Create Order and OrderItems in a transaction
-        await prisma.order.create({
-            data: {
-                userId,
-                total,
-                status: 'PENDING',
-                items: {
-                    create: cart.map(item => ({
-                        variantId: item.variantId,
-                        quantity: item.quantity,
-                        price: item.price
-                    }))
+        await prisma.$transaction([
+            prisma.order.create({
+                data: {
+                    userId,
+                    total,
+                    status: 'PENDING',
+                    items: {
+                        create: cart.map(item => ({
+                            variantId: item.variantId,
+                            quantity: item.quantity,
+                            price: item.price,
+                            buttonsType: item.buttonsType,
+                            // Note: we could also snapshot ledSurcharge here by looking it up, 
+                            // but for admin manual orders, the price passed in the cart already includes the surcharge.
+                        }))
+                    }
                 }
-            }
-        })
+            }),
+            prisma.user.update({
+                where: { id: userId },
+                data: {
+                    balance: {
+                        increment: total
+                    }
+                }
+            })
+        ])
 
         revalidatePath('/admin/orders')
+        revalidatePath('/admin/clients')
+        revalidatePath('/admin/dashboard')
     }
 
     return (

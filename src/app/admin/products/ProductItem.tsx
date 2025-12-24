@@ -15,6 +15,7 @@ interface Product {
     name: string
     category: string | null
     subcategory: string | null
+    basePrice: any
     ledSurcharge: any // Prisma.Decimal
     variants: Variant[]
 }
@@ -26,9 +27,8 @@ export default function ProductItem({ product }: { product: Product }) {
     const prices = product.variants.map(v => Number(v.price))
     const minPrice = Math.min(...prices)
     const maxPrice = Math.max(...prices)
-    const priceDisplay = prices.length > 0
-        ? (minPrice === maxPrice ? `$${minPrice}` : `$${minPrice} - $${maxPrice}`)
-        : "Sin precio"
+    const priceDisplay = `$${Number(product.basePrice).toFixed(2)}`
+
 
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault()

@@ -38,20 +38,21 @@ model User {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  imageUrl    String?
-  category    String? // Family
-  subcategory String? // Subgroup
+  id              String           @id @default(cuid())
+  name            String
+  description     String?
+  imageUrl        String?
+  category        String? // Family
+  subcategory     String? // Subgroup
+  basePrice       Decimal          @default(0)
   
   // LED Buttons Option
-  ledSurcharge Decimal @default(0)
+  ledSurcharge    Decimal          @default(0)
   
-  variants    ProductVariant[]
+  variants        ProductVariant[]
   
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
 
 model ProductVariant {
@@ -60,7 +61,7 @@ model ProductVariant {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   
   name      String  // e.g. "S", "M", "Red"
-  price     Decimal
+  price     Decimal? @default(0)
   
   orderItems OrderItem[]
 }

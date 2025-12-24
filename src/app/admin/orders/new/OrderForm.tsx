@@ -12,6 +12,7 @@ interface Variant {
 interface Product {
     id: string;
     name: string;
+    basePrice: any;
     ledSurcharge: any;
     variants: Variant[];
 }
@@ -23,11 +24,13 @@ export default function OrderForm({ clients, products, createOrderAction }: {
 }) {
     const router = useRouter();
     const [selectedUser, setSelectedUser] = useState(clients[0]?.id || '');
-    const [cart, setCart] = useState<{ variantId: string, quantity: number, price: number, name: string }[]>([]);
+    const [cart, setCart] = useState<{ variantId: string, quantity: number, price: number, name: string, buttonsType: 'COMMON' | 'LED' }[]>([]);
 
     // Product Selection State
     const [currentProductId, setCurrentProductId] = useState(products[0]?.id || '');
     const currentProduct = products.find(p => p.id === currentProductId);
+    const [buttonsType, setButtonsType] = useState<'COMMON' | 'LED'>('COMMON');
+
 
     // Auto-select first variant if available
     const [currentVariantId, setCurrentVariantId] = useState('');
@@ -50,28 +53,37 @@ export default function OrderForm({ clients, products, createOrderAction }: {
         if (!variant) return;
 
         const user = clients.find(c => c.id === selectedUser);
-        let price = Number(variant.price);
+        let price = Number(currentProduct.basePrice || variant.price);
+        const ledSurcharge = buttonsType === 'LED' ? Number(currentProduct.ledSurcharge || 0) : 0;
+
+        price = price + ledSurcharge;
+
         if (user?.isRetailer && user.surchargePercentage > 0) {
             price = price * (1 + user.surchargePercentage / 100);
         }
 
-        const existing = cart.find(item => item.variantId === currentVariantId);
+        const cartItemKey = `${currentVariantId}-${buttonsType}`;
+        const existing = cart.find(item => `${item.variantId}-${item.buttonsType}` === cartItemKey);
+
         if (existing) {
-            setCart(cart.map(item => item.variantId === currentVariantId ? { ...item, quantity: item.quantity + currentQty } : item));
+            setCart(cart.map(item => `${item.variantId}-${item.buttonsType}` === cartItemKey ? { ...item, quantity: item.quantity + currentQty } : item));
         } else {
             setCart([...cart, {
                 variantId: variant.id,
                 quantity: currentQty,
                 price: price,
-                name: `${currentProduct.name} - ${variant.name}`
+                name: `${currentProduct.name} - ${variant.name}`,
+                buttonsType: buttonsType
             }]);
         }
         setCurrentQty(1);
     };
 
-    const removeFromCart = (variantId: string) => {
-        setCart(cart.filter(item => item.variantId !== variantId));
+
+    const removeFromCart = (cartItemKey: string) => {
+        setCart(cart.filter(item => `${item.variantId}-${item.buttonsType}` !== cartItemKey));
     };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -135,6 +147,27 @@ export default function OrderForm({ clients, products, createOrderAction }: {
                         </div>
                     )}
 
+                    {/* Buttons Type Selector */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm text-slate-400">Tipo de Botones</label>
+                        <div className="flex bg-slate-900 border border-white/10 p-1 rounded-lg">
+                            <button
+                                type="button"
+                                onClick={() => setButtonsType('COMMON')}
+                                className={`flex-1 py-1.5 text-xs font-medium rounded transition-all ${buttonsType === 'COMMON' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                            >
+                                Común
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setButtonsType('LED')}
+                                className={`flex-1 py-1.5 text-xs font-medium rounded transition-all ${buttonsType === 'LED' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                            >
+                                LED
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="flex gap-4 items-end">
                         <div className="w-1/3">
                             <label className="block text-sm text-slate-400 mb-2">Cantidad</label>
@@ -162,18 +195,26 @@ export default function OrderForm({ clients, products, createOrderAction }: {
                 <h2 className="text-xl font-bold text-white mb-6">2. Resumen</h2>
 
                 <div className="flex-1 overflow-y-auto space-y-3 mb-6">
-                    {cart.map((item) => (
-                        <div key={item.variantId} className="flex justify-between items-center bg-slate-950/50 p-3 rounded border border-white/5">
+                    {cart.map((item, idx) => (
+                        <div key={`${item.variantId}-${item.buttonsType}-${idx}`} className="flex justify-between items-center bg-slate-950/50 p-3 rounded border border-white/5">
                             <div>
-                                <p className="text-white font-medium">{item.name}</p>
+                                <p className="text-white font-medium">
+                                    {item.name}
+                                    {item.buttonsType === 'LED' && (
+                                        <span className="ml-2 text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase font-bold tracking-tighter">
+                                            LED
+                                        </span>
+                                    )}
+                                </p>
                                 <p className="text-sm text-slate-500">{item.quantity} x ${item.price}</p>
                             </div>
                             <div className="flex items-center gap-4">
                                 <p className="text-white font-bold">${(item.quantity * item.price).toFixed(2)}</p>
-                                <button onClick={() => removeFromCart(item.variantId)} className="text-red-500 hover:text-red-400">×</button>
+                                <button onClick={() => removeFromCart(`${item.variantId}-${item.buttonsType}`)} className="text-red-500 hover:text-red-400">×</button>
                             </div>
                         </div>
                     ))}
+
                     {cart.length === 0 && <p className="text-slate-500 text-center italic">El carrito está vacío</p>}
                 </div>
 

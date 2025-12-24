@@ -11,10 +11,12 @@ interface ProductCardProps {
         imageUrl: string | null;
         category: string | null;
         subcategory: string | null;
+        basePrice: any;
+        ledSurcharge: any;
         variants: Array<{
             id: string;
             name: string;
-            price: number;
+            price?: number;
         }>;
     };
 }
@@ -38,9 +40,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                 variantId: selectedVariant.id,
                 productName: product.name,
                 variantName: selectedVariant.name,
-                price: Number(selectedVariant.price),
+                price: Number(product.basePrice),
                 buttonsType,
-                ledSurcharge: buttonsType === 'LED' ? Number((product as any).ledSurcharge) : 0,
+                ledSurcharge: buttonsType === 'LED' ? Number(product.ledSurcharge) : 0,
+
             },
             quantity
         );
@@ -99,8 +102,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                             >
                                 {product.variants.map((variant) => (
                                     <option key={variant.id} value={variant.id}>
-                                        {variant.name} - ${Number(variant.price).toFixed(2)}
+                                        {variant.name}
                                     </option>
+
                                 ))}
                             </select>
                         </div>
@@ -163,8 +167,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                         <div className="flex flex-col items-end min-w-[100px]">
                             <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-0.5">Total</span>
                             <span className="text-xl font-black text-white">
-                                ${selectedVariant ? ((Number(selectedVariant.price) + (buttonsType === 'LED' ? Number((product as any).ledSurcharge || 0) : 0)) * quantity).toFixed(2) : '0.00'}
+                                ${selectedVariant ? ((Number(product.basePrice) + (buttonsType === 'LED' ? Number(product.ledSurcharge || 0) : 0)) * quantity).toFixed(2) : '0.00'}
                             </span>
+
                         </div>
 
 

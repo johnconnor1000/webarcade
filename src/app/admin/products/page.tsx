@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import CreateProductForm from "./CreateProductForm";
 import ProductItem from "./ProductItem";
+import BulkPriceUpdate from "./BulkPriceUpdate";
 
 export default async function AdminProductsPage() {
     const productsRaw = await prisma.product.findMany({
@@ -8,11 +9,14 @@ export default async function AdminProductsPage() {
         include: { variants: true }
     });
 
+    const categories = Array.from(new Set(productsRaw.map(p => p.category).filter(Boolean))) as string[];
+
     const products = productsRaw.map(product => ({
         ...product,
         variants: product.variants.map(variant => ({
             ...variant,
-            price: Number(variant.price)
+            price: Number(product.basePrice)
+
         }))
     }));
 
@@ -20,7 +24,9 @@ export default async function AdminProductsPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold text-white">Productos</h1>
+                <BulkPriceUpdate categories={categories} />
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Product List */}

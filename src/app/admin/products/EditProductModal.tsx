@@ -6,7 +6,8 @@ import { updateProduct } from './actions'
 interface Variant {
     id?: string
     name: string
-    price: string | number
+    price?: string | number
+
 }
 
 interface Product {
@@ -14,6 +15,7 @@ interface Product {
     name: string
     category: string | null
     subcategory: string | null
+    basePrice: any // Prisma.Decimal
     ledSurcharge: any // Prisma.Decimal
     variants: Variant[]
 }
@@ -28,24 +30,28 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
     const [name, setName] = useState(product.name)
     const [category, setCategory] = useState(product.category || '')
     const [subcategory, setSubcategory] = useState(product.subcategory || '')
+    const [basePrice, setBasePrice] = useState(Number(product.basePrice) || 0)
     const [ledSurcharge, setLedSurcharge] = useState(Number(product.ledSurcharge) || 0)
-    const [variants, setVariants] = useState<Variant[]>(product.variants.map(v => ({ ...v, price: Number(v.price) })))
+    const [variants, setVariants] = useState<Variant[]>(product.variants.map(v => ({ ...v })))
+
     const [error, setError] = useState<string | null>(null)
 
     const addVariant = () => {
-        setVariants([...variants, { name: '', price: '' }])
+        setVariants([...variants, { name: '' }])
     }
+
 
     const removeVariant = (index: number) => {
         if (variants.length === 1) return
         setVariants(variants.filter((_, i) => i !== index))
     }
 
-    const updateVariant = (index: number, field: keyof Variant, value: string | number) => {
+    const updateVariant = (index: number, name: string) => {
         const newVariants = [...variants]
-        newVariants[index] = { ...newVariants[index], [field]: value }
+        newVariants[index] = { ...newVariants[index], name }
         setVariants(newVariants)
     }
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -56,12 +62,14 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
         formData.append('name', name)
         formData.append('category', category)
         formData.append('subcategory', subcategory)
+        formData.append('basePrice', basePrice.toString())
         formData.append('ledSurcharge', ledSurcharge.toString())
+
 
         variants.forEach((v, i) => {
             if (v.id) formData.append(`variant_id_${i}`, v.id)
             formData.append(`variant_name_${i}`, v.name)
-            formData.append(`variant_price_${i}`, v.price.toString())
+
         })
 
         startTransition(async () => {
@@ -121,18 +129,32 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm text-slate-400 mb-1 font-medium">Recargo Botones LED ($)</label>
-                            <input
-                                value={ledSurcharge}
-                                onChange={e => setLedSurcharge(parseFloat(e.target.value) || 0)}
-                                type="number"
-                                step="0.01"
-                                placeholder="0.00"
-                                title="Recargo por botones LED"
-                                className="w-full bg-slate-950 border border-indigo-500/20 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 transition-colors"
-                            />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm text-slate-400 mb-1 font-medium text-green-400">Precio Base ($)</label>
+                                <input
+                                    value={basePrice}
+                                    onChange={e => setBasePrice(parseFloat(e.target.value) || 0)}
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    className="w-full bg-slate-950 border border-green-500/20 rounded-lg px-3 py-2 text-white outline-none focus:border-green-500 transition-colors"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-slate-400 mb-1 font-medium text-indigo-400">Recargo LED ($)</label>
+                                <input
+                                    value={ledSurcharge}
+                                    onChange={e => setLedSurcharge(parseFloat(e.target.value) || 0)}
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    className="w-full bg-slate-950 border border-indigo-500/20 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 transition-colors"
+                                />
+                            </div>
                         </div>
+
                     </div>
 
                     <div className="pt-4 border-t border-white/5">
@@ -147,21 +169,13 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                                 <div key={i} className="flex gap-2 items-start">
                                     <input
                                         value={v.name}
-                                        onChange={e => updateVariant(i, 'name', e.target.value)}
+                                        onChange={e => updateVariant(i, e.target.value)}
                                         placeholder="Nombre"
                                         title="Nombre de la variante"
                                         className="flex-1 bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 transition-colors"
                                         required
                                     />
-                                    <input
-                                        value={v.price}
-                                        onChange={e => updateVariant(i, 'price', e.target.value)}
-                                        type="number"
-                                        step="0.01"
-                                        placeholder="Precio"
-                                        className="w-24 bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 transition-colors"
-                                        required
-                                    />
+
                                     {variants.length > 1 && (
                                         <button
                                             type="button"

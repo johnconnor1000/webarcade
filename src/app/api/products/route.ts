@@ -19,19 +19,22 @@ export async function GET() {
         });
 
         // Apply surcharge if user is retailer
-        const products = productsRaw.map(product => ({
-            ...product,
-            variants: product.variants.map(variant => {
-                let price = Number(variant.price);
-                if (user?.isRetailer && Number(user.surchargePercentage) > 0) {
-                    price = price * (1 + Number(user.surchargePercentage) / 100);
-                }
-                return {
+        const products = productsRaw.map(product => {
+            let basePrice = Number(product.basePrice);
+            if (user?.isRetailer && Number(user.surchargePercentage) > 0) {
+                basePrice = basePrice * (1 + Number(user.surchargePercentage) / 100);
+            }
+
+            return {
+                ...product,
+                basePrice: basePrice.toFixed(2),
+                variants: product.variants.map(variant => ({
                     ...variant,
-                    price: price.toFixed(2)
-                };
-            })
-        }));
+                    price: basePrice.toFixed(2) // variants share the product basePrice
+                }))
+            };
+        });
+
 
         return NextResponse.json(products);
     } catch (error) {

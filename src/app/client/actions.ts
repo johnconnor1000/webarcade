@@ -56,13 +56,14 @@ export async function createOrder(items: CartItem[], notes?: string) {
                 throw new Error(`Variante ${item.variantId} no encontrada`);
             }
 
-            let price = Number(variant.price);
+            let price = Number(variant.product.basePrice);
             const ledSurcharge = item.buttonsType === 'LED' ? Number(variant.product.ledSurcharge || 0) : 0;
 
             // Apply surcharge if user is retailer
             if (user.isRetailer && Number(user.surchargePercentage) > 0) {
                 price = price * (1 + Number(user.surchargePercentage) / 100);
             }
+
 
             const finalItemPrice = price + ledSurcharge;
             total += finalItemPrice * item.quantity;
