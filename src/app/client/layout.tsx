@@ -58,7 +58,7 @@ export default async function ClientLayout({
                         </div>
 
                         {/* Mobile Navigation */}
-                        <div className="md:hidden flex items-center space-x-1 pb-3 overflow-x-auto">
+                        <div className="md:hidden flex items-center space-x-1 py-1 overflow-x-auto no-scrollbar border-t border-white/5 mt-1">
                             <NavLink href="/client" label="Inicio" />
                             <NavLink href="/client/catalog" label="Catálogo" />
                             <NavLink href="/client/orders" label="Pedidos" />
