@@ -12,6 +12,7 @@ interface Variant {
 interface Product {
     id: string;
     name: string;
+    ledSurcharge: any;
     variants: Variant[];
 }
 

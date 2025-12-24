@@ -15,6 +15,7 @@ interface Product {
     name: string
     category: string | null
     subcategory: string | null
+    ledSurcharge: any // Prisma.Decimal
     variants: Variant[]
 }
 

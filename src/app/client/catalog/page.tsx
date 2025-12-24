@@ -10,6 +10,7 @@ interface Product {
     imageUrl: string | null;
     category: string | null;
     subcategory: string | null;
+    ledSurcharge: any;
     variants: Array<{
         id: string;
         name: string;
