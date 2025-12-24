@@ -127,10 +127,16 @@ function OrderCard({ order }: { order: any }) {
                             <div className="flex-1">
                                 <p className="text-white font-medium">
                                     {item.variant.product.name}
+                                    {item.buttonsType === 'LED' && (
+                                        <span className="ml-2 text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase font-bold tracking-tighter">
+                                            LED
+                                        </span>
+                                    )}
                                 </p>
                                 <p className="text-sm text-slate-400">
                                     Variante: {item.variant.name}
                                 </p>
+
                                 <p className="text-xs text-slate-500 mt-1">
                                     Cantidad: {item.quantity} × ${Number(item.price).toFixed(2)}
                                 </p>

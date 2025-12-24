@@ -14,6 +14,7 @@ interface Product {
     name: string
     category: string | null
     subcategory: string | null
+    ledSurcharge: any // Prisma.Decimal
     variants: Variant[]
 }
 
@@ -27,6 +28,7 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
     const [name, setName] = useState(product.name)
     const [category, setCategory] = useState(product.category || '')
     const [subcategory, setSubcategory] = useState(product.subcategory || '')
+    const [ledSurcharge, setLedSurcharge] = useState(Number(product.ledSurcharge) || 0)
     const [variants, setVariants] = useState<Variant[]>(product.variants.map(v => ({ ...v, price: Number(v.price) })))
     const [error, setError] = useState<string | null>(null)
 
@@ -54,6 +56,7 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
         formData.append('name', name)
         formData.append('category', category)
         formData.append('subcategory', subcategory)
+        formData.append('ledSurcharge', ledSurcharge.toString())
 
         variants.forEach((v, i) => {
             if (v.id) formData.append(`variant_id_${i}`, v.id)
@@ -116,6 +119,19 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                                     className="w-full bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 transition-colors"
                                 />
                             </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm text-slate-400 mb-1 font-medium">Recargo Botones LED ($)</label>
+                            <input
+                                value={ledSurcharge}
+                                onChange={e => setLedSurcharge(parseFloat(e.target.value) || 0)}
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                title="Recargo por botones LED"
+                                className="w-full bg-slate-950 border border-indigo-500/20 rounded-lg px-3 py-2 text-white outline-none focus:border-indigo-500 transition-colors"
+                            />
                         </div>
                     </div>
 

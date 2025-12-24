@@ -69,7 +69,7 @@ export default function CartPage() {
                 <div className="lg:col-span-2 space-y-4">
                     {items.map((item) => (
                         <div
-                            key={item.variantId}
+                            key={`${item.variantId}-${item.buttonsType}`}
                             className="bg-slate-900/50 border border-white/5 rounded-xl p-5 hover:border-indigo-500/20 transition-colors"
                         >
                             <div className="flex items-start gap-4">
@@ -78,9 +78,14 @@ export default function CartPage() {
                                     <h3 className="font-semibold text-white text-lg mb-1">
                                         {item.productName}
                                     </h3>
-                                    <p className="text-sm text-slate-400 mb-3">
+                                    <p className="text-sm text-slate-400 mb-1">
                                         Variante: {item.variantName}
                                     </p>
+                                    <div className="mb-3">
+                                        <span className={`text-[10px] px-2 py-0.5 rounded-full border border-white/10 uppercase font-bold tracking-tighter ${item.buttonsType === 'LED' ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/20' : 'bg-slate-800 text-slate-400'}`}>
+                                            Botones {item.buttonsType === 'LED' ? 'LED' : 'Comunes'}
+                                        </span>
+                                    </div>
                                     <p className="text-sm text-slate-500">
                                         ${item.price.toFixed(2)} c/u
                                     </p>
@@ -89,7 +94,7 @@ export default function CartPage() {
                                 {/* Quantity Controls */}
                                 <div className="flex items-center gap-3">
                                     <button
-                                        onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
+                                        onClick={() => updateQuantity(item.variantId, item.buttonsType, item.quantity - 1)}
                                         className="w-8 h-8 bg-slate-950 border border-white/10 rounded-lg text-white hover:bg-white/5 transition-colors flex items-center justify-center"
                                     >
                                         −
@@ -98,7 +103,7 @@ export default function CartPage() {
                                         {item.quantity}
                                     </span>
                                     <button
-                                        onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                                        onClick={() => updateQuantity(item.variantId, item.buttonsType, item.quantity + 1)}
                                         className="w-8 h-8 bg-slate-950 border border-white/10 rounded-lg text-white hover:bg-white/5 transition-colors flex items-center justify-center"
                                     >
                                         +
@@ -111,11 +116,12 @@ export default function CartPage() {
                                         ${(item.price * item.quantity).toFixed(2)}
                                     </p>
                                     <button
-                                        onClick={() => removeItem(item.variantId)}
+                                        onClick={() => removeItem(item.variantId, item.buttonsType)}
                                         className="text-sm text-red-400 hover:text-red-300 transition-colors"
                                     >
                                         Eliminar
                                     </button>
+
                                 </div>
                             </div>
                         </div>

@@ -53,11 +53,19 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                         <tbody>
                             {order.items.map((item) => (
                                 <tr key={item.id} className="hover:bg-slate-800 border-b border-slate-700 text-slate-300">
-                                    <td className="p-3">{item.variant.product.name}</td>
+                                    <td className="p-3">
+                                        {item.variant.product.name}
+                                        {item.buttonsType === 'LED' && (
+                                            <span className="ml-2 text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase font-bold tracking-tighter">
+                                                LED
+                                            </span>
+                                        )}
+                                    </td>
                                     <td className="p-3">{item.variant.name}</td>
                                     <td className="p-3">{item.quantity}</td>
                                     <td className="p-3">${Number(item.price).toFixed(2)}</td>
                                     <td className="p-3 font-medium text-white">${(Number(item.price) * item.quantity).toFixed(2)}</td>
+
                                     <td className="p-3">
                                         <OrderItemToggle itemId={item.id} isReady={item.isReady} />
                                     </td>

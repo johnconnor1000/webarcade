@@ -25,6 +25,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         product.variants[0]?.id || ''
     );
     const [quantity, setQuantity] = useState(1);
+    const [buttonsType, setButtonsType] = useState<'COMMON' | 'LED'>('COMMON');
     const [showNotification, setShowNotification] = useState(false);
 
     const selectedVariant = product.variants.find(v => v.id === selectedVariantId);
@@ -38,9 +39,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                 productName: product.name,
                 variantName: selectedVariant.name,
                 price: Number(selectedVariant.price),
+                buttonsType,
+                ledSurcharge: buttonsType === 'LED' ? Number((product as any).ledSurcharge) : 0,
             },
             quantity
         );
+
 
         // Show notification
         setShowNotification(true);
@@ -103,43 +107,66 @@ export default function ProductCard({ product }: ProductCardProps) {
                     )}
 
                     <div className="flex items-center justify-between sm:justify-end gap-4">
+                        {/* Buttons Type Selector */}
+                        <div className="flex flex-col gap-1.5 min-w-[140px]">
+                            <label className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Botones</label>
+                            <div className="flex bg-slate-950/50 p-1 rounded-lg border border-white/10">
+                                <button
+                                    onClick={() => setButtonsType('COMMON')}
+                                    className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${buttonsType === 'COMMON' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-400 hover:text-white'}`}
+                                >
+                                    Común
+                                </button>
+                                <button
+                                    onClick={() => setButtonsType('LED')}
+                                    className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${buttonsType === 'LED' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-400 hover:text-white'}`}
+                                >
+                                    LED
+                                </button>
+                            </div>
+                        </div>
+
                         {/* Quantity Selector */}
-                        <div className="flex items-center gap-1 bg-slate-950/30 p-1 rounded-xl border border-white/5">
-                            <button
-                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                className="w-9 h-9 flex items-center justify-center bg-slate-950/50 border border-white/10 rounded-lg text-white hover:bg-white/10 transition-colors"
-                                title="Menos"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
-                                </svg>
-                            </button>
-                            <input
-                                type="number"
-                                min="1"
-                                value={quantity}
-                                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                                title="Cantidad"
-                                className="w-12 bg-transparent border-none text-white text-center font-bold text-sm focus:outline-none focus:ring-0"
-                            />
-                            <button
-                                onClick={() => setQuantity(quantity + 1)}
-                                className="w-9 h-9 flex items-center justify-center bg-slate-950/50 border border-white/10 rounded-lg text-white hover:bg-white/10 transition-colors"
-                                title="Más"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
-                            </button>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Cantidad</label>
+                            <div className="flex items-center gap-1 bg-slate-950/30 p-1 rounded-xl border border-white/5 h-[38px]">
+                                <button
+                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                    className="w-8 h-8 flex items-center justify-center bg-slate-950/50 border border-white/10 rounded-lg text-white hover:bg-white/10 transition-colors"
+                                    title="Menos"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
+                                    </svg>
+                                </button>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                                    title="Cantidad"
+                                    className="w-10 bg-transparent border-none text-white text-center font-bold text-sm focus:outline-none focus:ring-0"
+                                />
+                                <button
+                                    onClick={() => setQuantity(quantity + 1)}
+                                    className="w-8 h-8 flex items-center justify-center bg-slate-950/50 border border-white/10 rounded-lg text-white hover:bg-white/10 transition-colors"
+                                    title="Más"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         {/* Price & Action */}
                         <div className="flex flex-col items-end min-w-[100px]">
                             <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-0.5">Total</span>
                             <span className="text-xl font-black text-white">
-                                ${selectedVariant ? (Number(selectedVariant.price) * quantity).toFixed(2) : '0.00'}
+                                ${selectedVariant ? ((Number(selectedVariant.price) + (buttonsType === 'LED' ? Number((product as any).ledSurcharge || 0) : 0)) * quantity).toFixed(2) : '0.00'}
                             </span>
                         </div>
+
 
                         <button
                             onClick={handleAddToCart}

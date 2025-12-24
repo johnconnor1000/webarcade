@@ -28,30 +28,30 @@ export default function ClientList({ clients }: ClientListProps) {
                     const isDebtor = balance > 0;
 
                     return (
-                        <div key={client.id} className="bg-slate-900/50 border border-white/5 p-4 rounded-xl flex items-center justify-between group">
-                            <div>
-                                <h3 className="font-semibold text-white">
+                        <div key={client.id} className="bg-slate-900/50 border border-white/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                            <div className="flex-1 min-w-0">
+                                <h3 className="font-semibold text-white truncate">
                                     {client.name}
                                     {client.isRetailer && (
-                                        <span className="ml-2 text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase tracking-wider">
+                                        <span className="ml-2 inline-block text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase tracking-wider">
                                             Minorista (+{Number(client.surchargePercentage)}%)
                                         </span>
                                     )}
                                 </h3>
-                                <p className="text-sm text-slate-400">{client.email}</p>
+                                <p className="text-sm text-slate-400 truncate">{client.email}</p>
                                 {client.phone && <p className="text-xs text-slate-500 mt-1">{client.phone}</p>}
                             </div>
-                            <div className="flex items-center gap-6">
-                                <div className="text-right">
-                                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Saldo</p>
-                                    <p className={`text-xl font-bold ${isDebtor ? 'text-red-500' : 'text-green-500'}`}>
+                            <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-6 border-t border-white/5 pt-4 sm:pt-0 sm:border-t-0">
+                                <div className="text-left sm:text-right">
+                                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Saldo</p>
+                                    <p className={`text-lg font-bold ${isDebtor ? 'text-red-500' : 'text-green-500'}`}>
                                         ${balance.toFixed(2)}
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Link
                                         href={`/admin/clients/${client.id}`}
-                                        className="opacity-0 group-hover:opacity-100 p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all border border-white/5"
+                                        className="p-2.5 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg text-indigo-400 hover:text-indigo-300 transition-all border border-indigo-500/20"
                                         title="Ver Cuenta Corriente"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -60,7 +60,7 @@ export default function ClientList({ clients }: ClientListProps) {
                                     </Link>
                                     <button
                                         onClick={() => setEditingClient(client)}
-                                        className="opacity-0 group-hover:opacity-100 p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all border border-white/5"
+                                        className="p-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all border border-white/10"
                                         title="Editar Cliente"
                                     >
                                         <EditIcon />
@@ -68,6 +68,7 @@ export default function ClientList({ clients }: ClientListProps) {
                                 </div>
                             </div>
                         </div>
+
                     )
                 })}
                 {clients.length === 0 && (

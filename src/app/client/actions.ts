@@ -11,7 +11,9 @@ interface CartItem {
     variantName: string;
     price: number;
     quantity: number;
+    buttonsType: 'COMMON' | 'LED';
 }
+
 
 export async function createOrder(items: CartItem[], notes?: string) {
     const session = await auth();
@@ -55,19 +57,25 @@ export async function createOrder(items: CartItem[], notes?: string) {
             }
 
             let price = Number(variant.price);
+            const ledSurcharge = item.buttonsType === 'LED' ? Number(variant.product.ledSurcharge || 0) : 0;
+
             // Apply surcharge if user is retailer
             if (user.isRetailer && Number(user.surchargePercentage) > 0) {
                 price = price * (1 + Number(user.surchargePercentage) / 100);
             }
 
-            total += price * item.quantity;
+            const finalItemPrice = price + ledSurcharge;
+            total += finalItemPrice * item.quantity;
 
             return {
                 variantId: item.variantId,
                 quantity: item.quantity,
-                price: price
+                price: finalItemPrice,
+                buttonsType: item.buttonsType,
+                ledSurchargeSnapshot: ledSurcharge
             };
         });
+
 
         // Create order with items
         const order = await prisma.order.create({

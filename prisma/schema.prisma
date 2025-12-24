@@ -45,6 +45,9 @@ model Product {
   category    String? // Family
   subcategory String? // Subgroup
   
+  // LED Buttons Option
+  ledSurcharge Decimal @default(0)
+  
   variants    ProductVariant[]
   
   createdAt   DateTime @default(now())
@@ -87,8 +90,14 @@ model OrderItem {
   
   quantity  Int
   price     Decimal // Snapshot price at time of order
+  
+  // LED Buttons Choice
+  buttonsType         String  @default("COMMON") // COMMON, LED
+  ledSurchargeSnapshot Decimal @default(0)
+
   isReady   Boolean @default(false) // Track if this item is ready for delivery
 }
+
 
 model Payment {
   id        String        @id @default(uuid())

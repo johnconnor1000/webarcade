@@ -7,6 +7,7 @@ export async function createProduct(formData: FormData) {
     const name = formData.get('name') as string
     const category = formData.get('category') as string
     const subcategory = formData.get('subcategory') as string
+    const ledSurcharge = parseFloat(formData.get('ledSurcharge') as string) || 0
 
     // Parse variants from form data (expected format: variant_name_0, variant_price_0, etc.)
     const variants = []
@@ -28,6 +29,7 @@ export async function createProduct(formData: FormData) {
             name,
             category,
             subcategory,
+            ledSurcharge,
             description: "Descripción pendiente...",
             variants: {
                 create: variants
@@ -43,6 +45,7 @@ export async function updateProduct(formData: FormData) {
     const name = formData.get('name') as string
     const category = formData.get('category') as string
     const subcategory = formData.get('subcategory') as string
+    const ledSurcharge = parseFloat(formData.get('ledSurcharge') as string) || 0
 
     // Parse variants from form data
     const variants = []
@@ -62,9 +65,11 @@ export async function updateProduct(formData: FormData) {
         data: {
             name,
             category,
-            subcategory
+            subcategory,
+            ledSurcharge
         }
     })
+
 
     // 2. Handle variants
     const currentVariants = await prisma.productVariant.findMany({

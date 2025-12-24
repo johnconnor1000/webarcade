@@ -8,13 +8,15 @@ export interface CartItem {
     variantName: string;
     price: number;
     quantity: number;
+    buttonsType: 'COMMON' | 'LED';
+    ledSurcharge: number;
 }
 
 interface CartContextType {
     items: CartItem[];
     addItem: (item: Omit<CartItem, 'quantity'>, quantity: number) => void;
-    updateQuantity: (variantId: string, quantity: number) => void;
-    removeItem: (variantId: string) => void;
+    updateQuantity: (variantId: string, buttonsType: string, quantity: number) => void;
+    removeItem: (variantId: string, buttonsType: string) => void;
     clearCart: () => void;
     getTotalItems: () => number;
     getTotalPrice: () => number;
@@ -27,12 +29,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const addItem = (item: Omit<CartItem, 'quantity'>, quantity: number) => {
         setItems(currentItems => {
-            const existingItem = currentItems.find(i => i.variantId === item.variantId);
+            const existingItem = currentItems.find(i =>
+                i.variantId === item.variantId && i.buttonsType === item.buttonsType
+            );
 
             if (existingItem) {
                 // Update quantity if item already exists
                 return currentItems.map(i =>
-                    i.variantId === item.variantId
+                    (i.variantId === item.variantId && i.buttonsType === item.buttonsType)
                         ? { ...i, quantity: i.quantity + quantity }
                         : i
                 );
@@ -43,26 +47,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
         });
     };
 
-    const updateQuantity = (variantId: string, quantity: number) => {
+
+    const updateQuantity = (variantId: string, buttonsType: string, quantity: number) => {
         if (quantity <= 0) {
-            removeItem(variantId);
+            removeItem(variantId, buttonsType);
             return;
         }
 
         setItems(currentItems =>
             currentItems.map(item =>
-                item.variantId === variantId
+                (item.variantId === variantId && item.buttonsType === buttonsType)
                     ? { ...item, quantity }
                     : item
             )
         );
     };
 
-    const removeItem = (variantId: string) => {
+    const removeItem = (variantId: string, buttonsType: string) => {
         setItems(currentItems =>
-            currentItems.filter(item => item.variantId !== variantId)
+            currentItems.filter(item => !(item.variantId === variantId && item.buttonsType === buttonsType))
         );
     };
+
 
     const clearCart = () => {
         setItems([]);
