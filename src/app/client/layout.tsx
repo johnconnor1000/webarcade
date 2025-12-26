@@ -19,7 +19,7 @@ export default async function ClientLayout({
                         <div className="flex items-center justify-between h-16">
                             {/* Logo */}
                             <Link href="/client" className="text-xl font-bold tracking-tight text-white">
-                                Mi<span className="text-primary">Cuenta</span>
+                                Arcade
                             </Link>
 
                             {/* Navigation Links */}
@@ -27,6 +27,7 @@ export default async function ClientLayout({
                                 <NavLink href="/client" label="Inicio" />
                                 <NavLink href="/client/catalog" label="Catálogo" />
                                 <NavLink href="/client/orders" label="Mis Pedidos" />
+                                <NavLink href="/client/stats" label="Mis Estadísticas" />
                                 <NavLink href="/client/statement" label="Estado de Cuenta" />
                                 <NavLink href="/client/payments" label="Mis Pagos" />
                             </div>
@@ -62,6 +63,7 @@ export default async function ClientLayout({
                             <NavLink href="/client" label="Inicio" />
                             <NavLink href="/client/catalog" label="Catálogo" />
                             <NavLink href="/client/orders" label="Pedidos" />
+                            <NavLink href="/client/stats" label="Estadísticas" />
                             <NavLink href="/client/statement" label="Cuenta" />
                             <NavLink href="/client/payments" label="Pagos" />
                         </div>

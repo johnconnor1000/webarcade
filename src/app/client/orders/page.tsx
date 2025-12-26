@@ -78,16 +78,33 @@ export default async function ClientOrdersPage() {
 }
 
 function OrderCard({ order }: { order: any }) {
+    const allItemsReady = order.items.length > 0 && order.items.every((item: any) => item.isReady);
+    const isProduction = order.status === 'IN_PRODUCTION';
+
     return (
-        <details className="bg-slate-900/50 border border-white/5 rounded-2xl overflow-hidden hover:border-indigo-500/20 transition-colors group">
+        <details className={`bg-slate-900/50 border transition-all overflow-hidden group rounded-2xl ${allItemsReady ? 'border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.1)]' : 'border-white/5 hover:border-indigo-500/20'}`}>
             <summary className="p-6 cursor-pointer list-none">
                 <div className="flex items-center justify-between">
                     <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-3 mb-2 flex-wrap">
                             <h3 className="text-white font-semibold">
                                 Pedido #{order.id.slice(0, 8)}
                             </h3>
                             <StatusBadge status={order.status} />
+                            {allItemsReady && order.status !== 'DELIVERED' && order.status !== 'CANCELED' && (
+                                <span className="bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase animate-pulse">
+                                    ¡LISTO PARA RETIRAR!
+                                </span>
+                            )}
+                            {isProduction && (
+                                <span className="flex items-center gap-1.5 text-indigo-400 text-xs font-bold animate-pulse">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                                    </span>
+                                    EN PRODUCCIÓN...
+                                </span>
+                            )}
                         </div>
                         <p className="text-sm text-slate-500">
                             {new Date(order.createdAt).toLocaleDateString('es-AR', {
@@ -106,8 +123,8 @@ function OrderCard({ order }: { order: any }) {
                         <p className="text-2xl font-bold text-white">
                             ${Number(order.total).toFixed(2)}
                         </p>
-                        <p className="text-xs text-slate-500 mt-1 group-open:hidden">
-                            Click para ver detalles
+                        <p className={`text-xs mt-1 group-open:hidden ${allItemsReady ? 'text-green-400 font-medium' : 'text-slate-500'}`}>
+                            {allItemsReady ? '¡Todo listo! Click para ver' : 'Click para ver detalles'}
                         </p>
                     </div>
                 </div>
@@ -145,6 +162,11 @@ function OrderCard({ order }: { order: any }) {
                                 <p className="text-white font-semibold">
                                     ${(Number(item.price) * item.quantity).toFixed(2)}
                                 </p>
+                                {item.isReady && (
+                                    <span className="text-[10px] text-green-400 font-bold uppercase tracking-widest mt-1 block">
+                                        ✓ Item Listo
+                                    </span>
+                                )}
                             </div>
                         </div>
                     ))}

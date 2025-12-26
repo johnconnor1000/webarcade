@@ -78,7 +78,7 @@ export default function CheckoutPage() {
                             <div className="space-y-4">
                                 {items.map((item) => (
                                     <div
-                                        key={item.variantId}
+                                        key={`${item.variantId}-${item.buttonsType}`}
                                         className="flex items-start justify-between py-3 border-b border-white/5 last:border-0"
                                     >
                                         <div className="flex-1">

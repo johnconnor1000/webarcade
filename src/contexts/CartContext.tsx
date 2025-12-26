@@ -79,7 +79,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
 
     const getTotalPrice = () => {
-        return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+        return items.reduce((total, item) => total + ((item.price + item.ledSurcharge) * item.quantity), 0);
     };
 
     return (

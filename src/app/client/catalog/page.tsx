@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import ProductCard from "@/components/client/ProductCard";
+import FloatingCart from "@/components/client/FloatingCart";
 
 interface Product {
     id: string;
@@ -105,6 +106,8 @@ export default function ClientCatalogPage() {
                     <p className="text-slate-400">No hay productos disponibles en este momento.</p>
                 </div>
             )}
+
+            <FloatingCart />
         </div>
     );
 }

@@ -8,17 +8,24 @@ export default function LoginPage() {
     const [errorMessage, dispatch, isPending] = useActionState(authenticate, undefined);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center bg-slate-950 relative overflow-hidden">
+            {/* Background Image with Overlay */}
+            <div
+                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40"
+                style={{ backgroundImage: "url('/arcade-bg.png')" }}
+            />
+            <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-950/80 via-slate-950/40 to-slate-950/80" />
+
             {/* Background Decorative Elements */}
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[100px]" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/10 rounded-full blur-[100px]" />
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/20 rounded-full blur-[100px] z-0" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/20 rounded-full blur-[100px] z-0" />
 
             <div className="w-full max-w-md p-8 relative z-10">
                 <div className="text-center mb-8">
-                    <Link href="/" className="inline-block text-2xl font-bold tracking-tight text-white mb-2">
-                        Gestión<span className="text-primary">Pedidos</span>
+                    <Link href="/" className="inline-block text-4xl font-extrabold tracking-tighter text-white mb-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                        Arcade
                     </Link>
-                    <h2 className="text-slate-400">Inicia sesión en tu cuenta</h2>
+                    <h2 className="text-slate-300 font-medium">Inicia sesión para continuar</h2>
                 </div>
 
                 <div className="bg-slate-900/50 backdrop-blur-sm border border-white/5 p-8 rounded-2xl shadow-xl">

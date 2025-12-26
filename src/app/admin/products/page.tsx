@@ -13,10 +13,11 @@ export default async function AdminProductsPage() {
 
     const products = productsRaw.map(product => ({
         ...product,
+        basePrice: Number(product.basePrice),
+        ledSurcharge: Number(product.ledSurcharge || 0),
         variants: product.variants.map(variant => ({
             ...variant,
-            price: Number(product.basePrice)
-
+            price: Number(variant.price)
         }))
     }));
 
