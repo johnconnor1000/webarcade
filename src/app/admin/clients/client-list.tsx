@@ -11,13 +11,15 @@ interface Client {
     phone: string | null
     isRetailer: boolean
     surchargePercentage: any // Prisma.Decimal
+    allowedCategories: string[]
 }
 
 interface ClientListProps {
     clients: (Client & { balance: any })[]
+    availableCategories: string[]
 }
 
-export default function ClientList({ clients }: ClientListProps) {
+export default function ClientList({ clients, availableCategories }: ClientListProps) {
     const [editingClient, setEditingClient] = useState<Client | null>(null)
 
     return (
@@ -80,6 +82,7 @@ export default function ClientList({ clients }: ClientListProps) {
                 <EditClientModal
                     client={editingClient}
                     onClose={() => setEditingClient(null)}
+                    availableCategories={availableCategories}
                 />
             )}
         </>

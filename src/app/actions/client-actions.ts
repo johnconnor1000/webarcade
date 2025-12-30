@@ -8,7 +8,8 @@ export async function updateClient(clientId: string, data: {
     email?: string,
     phone?: string,
     isRetailer?: boolean,
-    surchargePercentage?: number
+    surchargePercentage?: number,
+    allowedCategories?: string[]
 }) {
     try {
         await prisma.user.update({

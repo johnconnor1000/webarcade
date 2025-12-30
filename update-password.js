@@ -1,13 +1,16 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function updatePassword() {
     try {
+        const hashedPassword = await bcrypt.hash('corsa000', 10);
+
         // Update the existing client password
         const updated = await prisma.user.update({
             where: { email: 'prueba@gmail.com' },
             data: {
-                password: 'corsa000'
+                password: hashedPassword
             }
         });
 

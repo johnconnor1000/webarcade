@@ -11,8 +11,18 @@ export default async function AdminClientsPage() {
     const clients = clientsRaw.map(client => ({
         ...client,
         balance: Number(client.balance),
-        surchargePercentage: Number(client.surchargePercentage)
+        surchargePercentage: Number(client.surchargePercentage),
+        allowedCategories: client.allowedCategories || []
     }));
+
+    // Get all unique categories from products
+    const products = await prisma.product.findMany({
+        select: { category: true },
+        distinct: ['category']
+    });
+    const availableCategories = products
+        .map(p => p.category)
+        .filter(Boolean) as string[];
 
     // ... (rest of the server action stays the same) ...
     async function createClient(formData: FormData) {
@@ -45,7 +55,7 @@ export default async function AdminClientsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Client List (Refactored to client component) */}
-                <ClientList clients={clients} />
+                <ClientList clients={clients} availableCategories={availableCategories} />
 
                 {/* Create Client Form (Stays mostly the same) */}
                 <div className="bg-slate-950 border border-white/5 p-6 rounded-xl h-fit sticky top-6">

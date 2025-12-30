@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { authConfig } from "./auth.config";
 
@@ -28,8 +29,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return null;
                 }
 
-                // Plain text verification as requested
-                const isValid = user.password === credentials.password;
+                // Verify password with bcrypt
+                const isValid = await bcrypt.compare(
+                    credentials.password as string,
+                    user.password
+                );
+
+                console.log("Password valid:", isValid);
 
                 if (isValid) {
                     return {

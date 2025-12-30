@@ -23,6 +23,7 @@ interface Product {
 export default function ClientCatalogPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
     useEffect(() => {
         fetch('/api/products')
@@ -39,6 +40,11 @@ export default function ClientCatalogPage() {
 
     // Get unique categories
     const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+
+    // Filter products based on selected category
+    const filteredProducts = selectedCategory
+        ? products.filter(p => p.category === selectedCategory)
+        : products;
 
     if (loading) {
         return (
@@ -67,13 +73,23 @@ export default function ClientCatalogPage() {
                         Filtrar por Categoría
                     </label>
                     <div className="flex flex-wrap gap-2">
-                        <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">
+                        <button
+                            onClick={() => setSelectedCategory(null)}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === null
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                                : 'bg-slate-950 border border-white/10 text-slate-300 hover:bg-white/5'
+                                }`}
+                        >
                             Todos
                         </button>
                         {categories.map((cat) => (
                             <button
                                 key={cat}
-                                className="px-4 py-2 bg-slate-950 border border-white/10 text-slate-300 hover:bg-white/5 rounded-lg text-sm font-medium transition-colors"
+                                onClick={() => setSelectedCategory(cat as string)}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === cat
+                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                                    : 'bg-slate-950 border border-white/10 text-slate-300 hover:bg-white/5'
+                                    }`}
                             >
                                 {cat}
                             </button>
@@ -83,9 +99,9 @@ export default function ClientCatalogPage() {
             )}
 
             {/* Products List */}
-            {products.length > 0 ? (
+            {filteredProducts.length > 0 ? (
                 <div className="space-y-2">
-                    {products.map((product) => (
+                    {filteredProducts.map((product) => (
                         <ProductCard key={product.id} product={product} />
                     ))}
                 </div>
@@ -103,7 +119,11 @@ export default function ClientCatalogPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                         </svg>
                     </div>
-                    <p className="text-slate-400">No hay productos disponibles en este momento.</p>
+                    <p className="text-slate-400">
+                        {selectedCategory
+                            ? `No hay productos en la categoría "${selectedCategory}".`
+                            : 'No hay productos disponibles en este momento.'}
+                    </p>
                 </div>
             )}
 

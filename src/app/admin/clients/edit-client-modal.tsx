@@ -10,21 +10,24 @@ interface Client {
     phone: string | null
     isRetailer: boolean
     surchargePercentage: any // Prisma.Decimal
+    allowedCategories: string[]
 }
 
 interface EditClientModalProps {
     client: Client
     onClose: () => void
+    availableCategories: string[]
 }
 
-export default function EditClientModal({ client, onClose }: EditClientModalProps) {
+export default function EditClientModal({ client, onClose, availableCategories }: EditClientModalProps) {
     const [isPending, startTransition] = useTransition()
     const [formData, setFormData] = useState({
         name: client.name || '',
         email: client.email || '',
         phone: client.phone || '',
         isRetailer: client.isRetailer || false,
-        surchargePercentage: Number(client.surchargePercentage) || 0
+        surchargePercentage: Number(client.surchargePercentage) || 0,
+        allowedCategories: client.allowedCategories || []
     })
     const [newPassword, setNewPassword] = useState('')
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
@@ -127,6 +130,43 @@ export default function EditClientModal({ client, onClose }: EditClientModalProp
                             </div>
                         )}
                     </div>
+
+                    {/* Category Access Control */}
+                    {availableCategories.length > 0 && (
+                        <div className="pt-4 border-t border-white/5">
+                            <label className="block text-sm text-slate-400 mb-3">
+                                Categorías Permitidas
+                                <span className="text-xs text-slate-500 ml-2">(vacío = todas)</span>
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                                {availableCategories.map((category) => (
+                                    <label key={category} className="flex items-center gap-2 cursor-pointer group">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.allowedCategories.includes(category)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFormData({
+                                                        ...formData,
+                                                        allowedCategories: [...formData.allowedCategories, category]
+                                                    });
+                                                } else {
+                                                    setFormData({
+                                                        ...formData,
+                                                        allowedCategories: formData.allowedCategories.filter(c => c !== category)
+                                                    });
+                                                }
+                                            }}
+                                            className="w-4 h-4 bg-slate-950 border-white/10 rounded accent-indigo-600"
+                                        />
+                                        <span className="text-sm text-slate-300 group-hover:text-white transition-colors">
+                                            {category}
+                                        </span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <button
                         type="submit"

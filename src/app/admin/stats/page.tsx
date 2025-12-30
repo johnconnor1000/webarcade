@@ -30,24 +30,29 @@ export default async function AdminStatsPage({
         }
     });
 
-    // Aggregate data by product
-    const statsByProduct = orderItems.reduce((acc, item) => {
+    // Aggregate data by variant (not just product)
+    const statsByVariant = orderItems.reduce((acc, item) => {
         const product = item.variant.product;
-        if (!acc[product.id]) {
-            acc[product.id] = {
-                name: product.name,
+        const variant = item.variant;
+        const key = variant.id;
+
+        if (!acc[key]) {
+            acc[key] = {
+                productName: product.name,
+                variantName: variant.name,
+                displayName: `${product.name} - ${variant.name}`,
                 units: 0,
                 revenue: 0,
                 category: product.category || 'Sin categoría'
             };
         }
-        acc[product.id].units += item.quantity;
-        acc[product.id].revenue += Number(item.price) * item.quantity;
+        acc[key].units += item.quantity;
+        acc[key].revenue += Number(item.price) * item.quantity;
         return acc;
-    }, {} as Record<string, { name: string, units: number, revenue: number, category: string }>);
+    }, {} as Record<string, { productName: string, variantName: string, displayName: string, units: number, revenue: number, category: string }>);
 
-    const sortedByUnits = Object.values(statsByProduct).sort((a, b) => b.units - a.units);
-    const sortedByRevenue = Object.values(statsByProduct).sort((a, b) => b.revenue - a.revenue);
+    const sortedByUnits = Object.values(statsByVariant).sort((a, b) => b.units - a.units);
+    const sortedByRevenue = Object.values(statsByVariant).sort((a, b) => b.revenue - a.revenue);
 
     const totalOrders = await prisma.order.count({
         where: {
@@ -56,8 +61,8 @@ export default async function AdminStatsPage({
         }
     });
 
-    const totalRevenue = Object.values(statsByProduct).reduce((sum, p) => sum + p.revenue, 0);
-    const totalUnits = Object.values(statsByProduct).reduce((sum, p) => sum + p.units, 0);
+    const totalRevenue = Object.values(statsByVariant).reduce((sum, p) => sum + p.revenue, 0);
+    const totalUnits = Object.values(statsByVariant).reduce((sum, p) => sum + p.units, 0);
 
     return (
         <div className="space-y-8 pb-12">
@@ -115,21 +120,22 @@ export default async function AdminStatsPage({
                             <table className="w-full text-left">
                                 <thead className="bg-slate-950/50 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                                     <tr>
-                                        <th className="px-6 py-3">Producto</th>
+                                        <th className="px-6 py-3">Producto / Variante</th>
                                         <th className="px-6 py-3 text-right">Cant.</th>
                                         <th className="px-6 py-3 text-right">Recaudación</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
                                     {sortedByUnits.map((p, idx) => (
-                                        <tr key={p.name} className="hover:bg-white/[0.02] transition-colors group">
+                                        <tr key={p.displayName} className="hover:bg-white/[0.02] transition-colors group">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <span className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-bold ${idx < 3 ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-500'}`}>
                                                         {idx + 1}
                                                     </span>
                                                     <div>
-                                                        <p className="text-sm font-medium text-white">{p.name}</p>
+                                                        <p className="text-sm font-medium text-white">{p.productName}</p>
+                                                        <p className="text-xs text-indigo-400">{p.variantName}</p>
                                                         <p className="text-[10px] text-slate-500 uppercase">{p.category}</p>
                                                     </div>
                                                 </div>
@@ -161,21 +167,22 @@ export default async function AdminStatsPage({
                             <table className="w-full text-left">
                                 <thead className="bg-slate-950/50 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                                     <tr>
-                                        <th className="px-6 py-3">Producto</th>
+                                        <th className="px-6 py-3">Producto / Variante</th>
                                         <th className="px-6 py-3 text-right">Ingresos</th>
                                         <th className="px-6 py-3 text-right">Participación</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
                                     {sortedByRevenue.map((p, idx) => (
-                                        <tr key={p.name} className="hover:bg-white/[0.02] transition-colors group">
+                                        <tr key={p.displayName} className="hover:bg-white/[0.02] transition-colors group">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <span className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-bold ${idx < 3 ? 'bg-green-500 text-white' : 'bg-slate-800 text-slate-500'}`}>
                                                         {idx + 1}
                                                     </span>
                                                     <div>
-                                                        <p className="text-sm font-medium text-white">{p.name}</p>
+                                                        <p className="text-sm font-medium text-white">{p.productName}</p>
+                                                        <p className="text-xs text-green-400">{p.variantName}</p>
                                                         <p className="text-[10px] text-slate-500 uppercase">{p.category}</p>
                                                     </div>
                                                 </div>

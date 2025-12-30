@@ -18,8 +18,16 @@ export async function GET() {
             }
         });
 
+        // Filter by allowed categories if user has restrictions
+        let filteredProducts = productsRaw;
+        if (user?.allowedCategories && user.allowedCategories.length > 0) {
+            filteredProducts = productsRaw.filter(product =>
+                product.category && user.allowedCategories.includes(product.category)
+            );
+        }
+
         // Apply surcharge if user is retailer
-        const products = productsRaw.map(product => {
+        const products = filteredProducts.map(product => {
             let basePrice = Number(product.basePrice);
             if (user?.isRetailer && Number(user.surchargePercentage) > 0) {
                 basePrice = basePrice * (1 + Number(user.surchargePercentage) / 100);
