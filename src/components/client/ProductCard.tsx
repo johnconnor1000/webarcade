@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { formatCurrency } from '@/lib/utils';
 
 interface ProductCardProps {
     product: {
@@ -167,7 +168,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         <div className="flex flex-col items-end min-w-[100px]">
                             <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-0.5">Total</span>
                             <span className="text-xl font-black text-white">
-                                ${selectedVariant ? ((Number(product.basePrice) + (buttonsType === 'LED' ? Number(product.ledSurcharge || 0) : 0)) * quantity).toFixed(2) : '0.00'}
+                                ${selectedVariant ? formatCurrency((Number(product.basePrice) + (buttonsType === 'LED' ? Number(product.ledSurcharge || 0) : 0)) * quantity) : '0,00'}
                             </span>
 
                         </div>

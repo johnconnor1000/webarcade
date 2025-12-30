@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function ClientPaymentsPage() {
     const session = await auth();
@@ -45,7 +46,7 @@ export default async function ClientPaymentsPage() {
                     <div>
                         <p className="text-sm text-slate-400 mb-1">Total Pagado</p>
                         <p className="text-4xl font-bold text-white">
-                            ${totalPaid.toFixed(2)}
+                            ${formatCurrency(totalPaid)}
                         </p>
                     </div>
                     <div className="text-right">
@@ -69,7 +70,7 @@ export default async function ClientPaymentsPage() {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2">
                                         <p className="text-xl font-bold text-white">
-                                            ${Number(payment.amount).toFixed(2)}
+                                            ${formatCurrency(Number(payment.amount))}
                                         </p>
                                         <PaymentTypeBadge type={payment.type} />
                                     </div>

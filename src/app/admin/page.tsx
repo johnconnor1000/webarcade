@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function AdminDashboardPage() {
     const session = await auth();
@@ -78,7 +79,7 @@ export default async function AdminDashboardPage() {
                 />
                 <StatCard
                     title="Ingresos del Mes"
-                    value={`$${monthlyRevenue.toLocaleString('es-AR')}`}
+                    value={`$${formatCurrency(monthlyRevenue)}`}
                     change="Ventas totales"
                     intent="success"
                 />
@@ -106,7 +107,7 @@ export default async function AdminDashboardPage() {
                                     </div>
                                 </div>
                                 <p className={`font-bold ${activity.type === 'ORDER' ? 'text-white' : 'text-green-400'}`}>
-                                    {activity.type === 'ORDER' ? '-' : '+'}${activity.amount.toLocaleString('es-AR')}
+                                    {activity.type === 'ORDER' ? '-' : '+'}${formatCurrency(activity.amount)}
                                 </p>
                             </div>
                         ))}

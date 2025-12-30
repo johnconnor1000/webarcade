@@ -5,6 +5,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useRouter } from "next/navigation";
 import { createOrder } from "../actions";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/utils";
 
 export default function CheckoutPage() {
     const { items, getTotalPrice, getTotalItems, clearCart } = useCart();
@@ -91,10 +92,10 @@ export default function CheckoutPage() {
                                         </div>
                                         <div className="text-right">
                                             <p className="font-semibold text-white">
-                                                ${(item.price * item.quantity).toFixed(2)}
+                                                ${formatCurrency(item.price * item.quantity)}
                                             </p>
                                             <p className="text-xs text-slate-500">
-                                                ${item.price.toFixed(2)} c/u
+                                                ${formatCurrency(item.price)} c/u
                                             </p>
                                         </div>
                                     </div>
@@ -130,12 +131,12 @@ export default function CheckoutPage() {
                             <div className="space-y-3 mb-6">
                                 <div className="flex justify-between text-slate-400">
                                     <span>Subtotal</span>
-                                    <span>${getTotalPrice().toFixed(2)}</span>
+                                    <span>${formatCurrency(getTotalPrice())}</span>
                                 </div>
                                 <div className="border-t border-white/5 pt-3">
                                     <div className="flex justify-between text-white text-2xl font-bold">
                                         <span>Total</span>
-                                        <span>${getTotalPrice().toFixed(2)}</span>
+                                        <span>${formatCurrency(getTotalPrice())}</span>
                                     </div>
                                 </div>
                             </div>

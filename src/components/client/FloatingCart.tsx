@@ -3,6 +3,7 @@
 import { useCart } from "@/contexts/CartContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { formatCurrency } from "@/lib/utils";
 
 export default function FloatingCart() {
     const { items, getTotalPrice, getTotalItems } = useCart();
@@ -41,7 +42,7 @@ export default function FloatingCart() {
                                 {getTotalItems()} {getTotalItems() === 1 ? 'Producto' : 'Productos'}
                             </p>
                             <p className="text-indigo-400 font-bold text-xl">
-                                Total: ${getTotalPrice().toFixed(2)}
+                                Total: ${formatCurrency(getTotalPrice())}
                             </p>
                         </div>
                     </div>

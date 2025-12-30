@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function ClientDashboardPage() {
     const session = await auth();
@@ -77,7 +78,7 @@ export default async function ClientDashboardPage() {
                             </svg>
                         </div>
                         <div className={`text-3xl font-bold ${isDebtor ? 'text-red-500' : 'text-green-500'}`}>
-                            ${balance.toFixed(2)}
+                            ${formatCurrency(balance)}
                         </div>
                         <div className="text-sm mt-2 text-slate-500">
                             {isDebtor ? 'Deuda pendiente' : balance < 0 ? 'A tu favor' : 'Sin deuda'}
@@ -98,7 +99,7 @@ export default async function ClientDashboardPage() {
                 <div className="bg-slate-900/50 border border-white/5 p-6 rounded-2xl hover:border-indigo-500/20 transition-colors">
                     <h3 className="text-sm font-medium text-slate-400 mb-2">Total Pagado</h3>
                     <div className="text-3xl font-bold text-white">
-                        ${Number(totalPaid._sum.amount || 0).toFixed(2)}
+                        ${formatCurrency(Number(totalPaid._sum.amount || 0))}
                     </div>
                     <div className="text-sm mt-2 text-slate-500">
                         Pagos acumulados
@@ -137,7 +138,7 @@ export default async function ClientDashboardPage() {
                                     <div className="text-right">
                                         <StatusBadge status={order.status} />
                                         <p className="text-white font-bold mt-1">
-                                            ${Number(order.total).toFixed(2)}
+                                            ${formatCurrency(Number(order.total))}
                                         </p>
                                     </div>
                                 </div>
@@ -172,7 +173,7 @@ export default async function ClientDashboardPage() {
                             >
                                 <div>
                                     <p className="text-white font-medium">
-                                        ${Number(payment.amount).toFixed(2)}
+                                        ${formatCurrency(Number(payment.amount))}
                                     </p>
                                     <p className="text-sm text-slate-500">
                                         {new Date(payment.createdAt).toLocaleDateString('es-AR')} · {payment.method}

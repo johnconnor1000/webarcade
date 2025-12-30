@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function ClientOrdersPage() {
     const session = await auth();
@@ -121,7 +122,7 @@ function OrderCard({ order }: { order: any }) {
                     </div>
                     <div className="text-right">
                         <p className="text-2xl font-bold text-white">
-                            ${Number(order.total).toFixed(2)}
+                            ${formatCurrency(Number(order.total))}
                         </p>
                         <p className={`text-xs mt-1 group-open:hidden ${allItemsReady ? 'text-green-400 font-medium' : 'text-slate-500'}`}>
                             {allItemsReady ? '¡Todo listo! Click para ver' : 'Click para ver detalles'}
@@ -155,12 +156,12 @@ function OrderCard({ order }: { order: any }) {
                                 </p>
 
                                 <p className="text-xs text-slate-500 mt-1">
-                                    Cantidad: {item.quantity} × ${Number(item.price).toFixed(2)}
+                                    Cantidad: {item.quantity} × ${formatCurrency(Number(item.price))}
                                 </p>
                             </div>
                             <div className="text-right">
                                 <p className="text-white font-semibold">
-                                    ${(Number(item.price) * item.quantity).toFixed(2)}
+                                    ${formatCurrency(Number(item.price) * item.quantity)}
                                 </p>
                                 {item.isReady && (
                                     <span className="text-[10px] text-green-400 font-bold uppercase tracking-widest mt-1 block">

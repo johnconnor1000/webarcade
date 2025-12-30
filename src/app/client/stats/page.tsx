@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { formatCurrency } from "@/lib/utils";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -115,7 +116,7 @@ export default async function ClientStatsPage({
                 </div>
                 <div className="bg-slate-900/50 border border-white/5 p-6 rounded-2xl">
                     <p className="text-sm font-medium text-slate-500 mb-1">Inversión Total</p>
-                    <p className="text-3xl font-bold text-indigo-400">${totalSpent.toLocaleString('es-AR')}</p>
+                    <p className="text-3xl font-bold text-indigo-400">${formatCurrency(totalSpent)}</p>
                 </div>
             </div>
 
@@ -154,7 +155,7 @@ export default async function ClientStatsPage({
                                             <span className="text-sm font-bold text-indigo-400">{p.units}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <span className="text-sm text-slate-400">${p.totalSpent.toLocaleString('es-AR')}</span>
+                                            <span className="text-sm text-slate-400">${formatCurrency(p.totalSpent)}</span>
                                         </td>
                                     </tr>
                                 ))}

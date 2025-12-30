@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { formatCurrency } from '@/lib/utils'
 
 interface Transaction {
     id: string
@@ -29,7 +30,7 @@ export default function Statement({ userName, currentBalance, transactions }: St
                     <div>
                         <h2 className="text-sm font-medium text-slate-400 uppercase tracking-wider">Saldo al día de hoy</h2>
                         <div className={`text-4xl font-black mt-1 ${isDebtor ? 'text-red-500' : 'text-green-500'}`}>
-                            ${currentBalance.toFixed(2)}
+                            ${formatCurrency(currentBalance)}
                         </div>
                         <p className="text-sm text-slate-500 mt-2">
                             Cliente: <span className="text-white font-medium">{userName}</span>
@@ -98,14 +99,14 @@ export default function Statement({ userName, currentBalance, transactions }: St
                                     <td className="px-6 py-4 text-right">
                                         {tx.type === 'ORDER' ? (
                                             <span className="text-sm font-bold text-white">
-                                                ${tx.amount.toFixed(2)}
+                                                ${formatCurrency(tx.amount)}
                                             </span>
                                         ) : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         {tx.type === 'PAYMENT' ? (
                                             <span className="text-sm font-bold text-green-500">
-                                                ${tx.amount.toFixed(2)}
+                                                ${formatCurrency(tx.amount)}
                                             </span>
                                         ) : '-'}
                                     </td>

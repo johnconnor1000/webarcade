@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 
 export default async function AdminStatsPage({
@@ -104,7 +105,7 @@ export default async function AdminStatsPage({
                 </div>
                 <div className="bg-slate-900/50 border border-white/5 p-6 rounded-2xl">
                     <p className="text-sm font-medium text-slate-500 mb-1">Ingresos Totales</p>
-                    <p className="text-3xl font-bold text-green-400">${totalRevenue.toLocaleString('es-AR')}</p>
+                    <p className="text-3xl font-bold text-green-400">${formatCurrency(totalRevenue)}</p>
                 </div>
             </div>
 
@@ -144,7 +145,7 @@ export default async function AdminStatsPage({
                                                 <span className="text-sm font-bold text-indigo-400">{p.units}</span>
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <span className="text-sm text-slate-400">${p.revenue.toLocaleString('es-AR')}</span>
+                                                <span className="text-sm text-slate-400">${formatCurrency(p.revenue)}</span>
                                             </td>
                                         </tr>
                                     ))}
@@ -188,7 +189,7 @@ export default async function AdminStatsPage({
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <span className="text-sm font-bold text-green-400">${p.revenue.toLocaleString('es-AR')}</span>
+                                                <span className="text-sm font-bold text-green-400">${formatCurrency(p.revenue)}</span>
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex flex-col items-end gap-1">

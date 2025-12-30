@@ -3,6 +3,7 @@
 import { useCart } from "@/contexts/CartContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/lib/utils";
 
 export default function CartPage() {
     const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems } = useCart();
@@ -87,7 +88,7 @@ export default function CartPage() {
                                         </span>
                                     </div>
                                     <p className="text-sm text-slate-500">
-                                        ${item.price.toFixed(2)} c/u
+                                        ${formatCurrency(item.price)} c/u
                                     </p>
                                 </div>
 
@@ -113,7 +114,7 @@ export default function CartPage() {
                                 {/* Subtotal and Remove */}
                                 <div className="text-right">
                                     <p className="text-xl font-bold text-white mb-2">
-                                        ${(item.price * item.quantity).toFixed(2)}
+                                        ${formatCurrency(item.price * item.quantity)}
                                     </p>
                                     <button
                                         onClick={() => removeItem(item.variantId, item.buttonsType)}
@@ -138,12 +139,12 @@ export default function CartPage() {
                         <div className="space-y-3 mb-6">
                             <div className="flex justify-between text-slate-400">
                                 <span>Subtotal ({getTotalItems()} items)</span>
-                                <span>${getTotalPrice().toFixed(2)}</span>
+                                <span>${formatCurrency(getTotalPrice())}</span>
                             </div>
                             <div className="border-t border-white/5 pt-3">
                                 <div className="flex justify-between text-white text-xl font-bold">
                                     <span>Total</span>
-                                    <span>${getTotalPrice().toFixed(2)}</span>
+                                    <span>${formatCurrency(getTotalPrice())}</span>
                                 </div>
                             </div>
                         </div>
