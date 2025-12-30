@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import bcrypt from 'bcryptjs'
 
 export async function updateClient(clientId: string, data: {
     name?: string,
@@ -26,9 +27,10 @@ export async function updateClient(clientId: string, data: {
 
 export async function resetClientPassword(clientId: string, newPassword: string) {
     try {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
         await prisma.user.update({
             where: { id: clientId },
-            data: { password: newPassword }
+            data: { password: hashedPassword }
         });
         return { success: true };
     } catch (error) {
