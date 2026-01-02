@@ -14,12 +14,29 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
 
     // Convert to plain objects to avoid Decimal serialization issues
     const serializedOrder = {
-        ...order,
+        id: order.id,
+        status: order.status,
         total: order.total.toString(),
+        createdAt: order.createdAt.toISOString(),
+        notes: order.notes,
+        user: {
+            name: order.user.name,
+            email: order.user.email,
+            phone: order.user.phone
+        },
         items: order.items.map(item => ({
-            ...item,
+            id: item.id,
+            quantity: item.quantity,
+            deliveredQuantity: item.deliveredQuantity,
             price: item.price.toString(),
-            ledSurchargeSnapshot: item.ledSurchargeSnapshot.toString()
+            isReady: item.isReady,
+            buttonsType: item.buttonsType,
+            variant: {
+                name: item.variant.name,
+                product: {
+                    name: item.variant.product.name
+                }
+            }
         }))
     }
 

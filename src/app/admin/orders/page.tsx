@@ -8,15 +8,16 @@ export default async function AdminOrdersPage() {
         orderBy: { createdAt: 'desc' }
     });
 
-    // Convert to plain objects to avoid Decimal serialization issues
+    // Convert to strict plain objects to avoid Decimal serialization issues
     const orders = rawOrders.map(order => ({
-        ...order,
+        id: order.id,
+        status: order.status,
         total: order.total.toString(),
-        items: order.items.map(item => ({
-            ...item,
-            price: item.price.toString(),
-            ledSurchargeSnapshot: item.ledSurchargeSnapshot.toString()
-        }))
+        createdAt: order.createdAt.toISOString(),
+        user: {
+            id: order.user.id,
+            name: order.user.name
+        }
     }));
 
     return (

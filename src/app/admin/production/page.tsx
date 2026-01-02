@@ -31,12 +31,20 @@ export default async function ProductionPage() {
     });
 
     const pendingItems = rawPendingItems.map(item => ({
-        ...item,
-        price: item.price.toString(),
-        ledSurchargeSnapshot: item.ledSurchargeSnapshot.toString(),
+        id: item.id,
+        quantity: item.quantity,
+        isReady: item.isReady,
+        variant: {
+            name: item.variant.name,
+            product: {
+                name: item.variant.product.name
+            }
+        },
         order: {
-            ...item.order,
-            total: item.order.total.toString()
+            id: item.order.id,
+            user: {
+                name: item.order.user.name
+            }
         }
     }));
 
