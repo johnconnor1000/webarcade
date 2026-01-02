@@ -50,8 +50,8 @@ export default async function AdminOrdersPage() {
                                         {order.status === 'PARTIALLY_DELIVERED' ? 'ENTREGA PARCIAL' : order.status}
                                     </span>
                                 </div>
-                                <p className="text-slate-400 text-sm">Cliente: <span className="text-white">{order.user.name}</span></p>
-                                <p className="text-slate-500 text-xs">{new Date(order.createdAt).toLocaleDateString()}</p>
+                                <p className="text-slate-400 text-sm">Cliente: <span className="text-white">{order.user?.name || 'Cliente desconocido'}</span></p>
+                                <p className="text-slate-500 text-xs">{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Fecha desconocida'}</p>
                             </div>
 
                             <div className="flex items-center gap-6">

@@ -71,13 +71,13 @@ export default async function ProductionPage() {
                         <tbody>
                             {pendingItems.map((item) => (
                                 <tr key={item.id} className="hover:bg-slate-800 border-b border-slate-700 text-slate-300">
-                                    <td className="p-3">{item.variant.product.name}</td>
-                                    <td className="p-3">{item.variant.name}</td>
+                                    <td className="p-3">{item.variant?.product?.name || 'Producto sin nombre'}</td>
+                                    <td className="p-3">{item.variant?.name || 'N/A'}</td>
                                     <td className="p-3">{item.quantity}</td>
                                     <td className="p-3">
                                         <div className="flex flex-col">
-                                            <span className="text-white font-medium">#{item.order.id.slice(0, 8)}</span>
-                                            <span className="text-xs text-slate-500">{item.order.user.name}</span>
+                                            <span className="text-white font-medium">#{item.order?.id?.slice(0, 8) || 'N/A'}</span>
+                                            <span className="text-xs text-slate-500">{item.order?.user?.name || 'Cliente desconocido'}</span>
                                         </div>
                                     </td>
                                     <td className="p-3">
