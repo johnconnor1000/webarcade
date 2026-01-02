@@ -102,16 +102,6 @@ export async function createOrder(items: CartItem[], notes?: string) {
             }
         });
 
-        // Update user balance (increase debt)
-        await prisma.user.update({
-            where: { id: user.id },
-            data: {
-                balance: {
-                    increment: total
-                }
-            }
-        });
-
         revalidatePath('/client/orders');
         revalidatePath('/client');
 

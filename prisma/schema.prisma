@@ -67,6 +67,7 @@ model OrderItem {
   orderId              String
   variantId            String
   quantity             Int
+  deliveredQuantity    Int            @default(0)
   price                Decimal
   isReady              Boolean        @default(false)
   buttonsType          String         @default("COMMON")

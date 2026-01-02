@@ -1,5 +1,6 @@
 import { getOrderDetails } from '@/app/actions/order-actions'
 import OrderItemToggle from './item-toggle'
+import DeliverItem from './deliver-item'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -44,10 +45,11 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                             <tr className="bg-slate-800/50">
                                 <th className="p-3 border-b border-slate-700 text-slate-400">Producto</th>
                                 <th className="p-3 border-b border-slate-700 text-slate-400">Variante</th>
-                                <th className="p-3 border-b border-slate-700 text-slate-400">Cantidad</th>
+                                <th className="p-3 border-b border-slate-700 text-slate-400 text-center">Pedido</th>
+                                <th className="p-3 border-b border-slate-700 text-slate-400 text-center">Entregado</th>
                                 <th className="p-3 border-b border-slate-700 text-slate-400">Precio Unit.</th>
                                 <th className="p-3 border-b border-slate-700 text-slate-400">Subtotal</th>
-                                <th className="p-3 border-b border-slate-700 text-slate-400">Estado (Listo?)</th>
+                                <th className="p-3 border-b border-slate-700 text-slate-400">Acciones / Entrega</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,12 +64,27 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                                         )}
                                     </td>
                                     <td className="p-3">{item.variant.name}</td>
-                                    <td className="p-3">{item.quantity}</td>
+                                    <td className="p-3 text-center">{item.quantity}</td>
+                                    <td className="p-3 text-center">
+                                        <span className={`font-bold ${item.deliveredQuantity >= item.quantity ? 'text-green-500' : item.deliveredQuantity > 0 ? 'text-yellow-500' : 'text-slate-500'}`}>
+                                            {item.deliveredQuantity}
+                                        </span>
+                                    </td>
                                     <td className="p-3">${Number(item.price).toFixed(2)}</td>
                                     <td className="p-3 font-medium text-white">${(Number(item.price) * item.quantity).toFixed(2)}</td>
 
                                     <td className="p-3">
-                                        <OrderItemToggle itemId={item.id} isReady={item.isReady} />
+                                        <div className="flex flex-col gap-2">
+                                            <OrderItemToggle itemId={item.id} isReady={item.isReady} />
+                                            <DeliverItem
+                                                orderId={order.id}
+                                                itemId={item.id}
+                                                productName={item.variant.product.name}
+                                                variantName={item.variant.name}
+                                                orderedQuantity={item.quantity}
+                                                deliveredQuantity={item.deliveredQuantity}
+                                            />
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

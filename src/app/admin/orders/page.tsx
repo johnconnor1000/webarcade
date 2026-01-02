@@ -12,38 +12,14 @@ export default async function AdminOrdersPage() {
         'use server'
         const orderId = formData.get('orderId') as string
         const newStatus = formData.get('status') as string
-        const userId = formData.get('userId') as string
-        const total = parseFloat(formData.get('total') as string)
 
-        // Transaction: If status becomes DELIVERED, add debt to user
-        await prisma.$transaction(async (tx) => {
-            const order = await tx.order.findUnique({ where: { id: orderId } })
-            if (!order) return;
-
-            // Prevent double counting if already delivered
-            if (order.status === 'DELIVERED') {
-                // If moving OUT of Delivered (e.g. canceling), should we credit back? 
-                // For MVP, let's just update status for now, logic can be complex.
-                // User asked: "una vez entregado suma el valor"
-            }
-
-            await tx.order.update({
-                where: { id: orderId },
-                data: { status: newStatus }
-            })
-
-            if (newStatus === 'DELIVERED' && order.status !== 'DELIVERED') {
-                await tx.user.update({
-                    where: { id: userId },
-                    data: {
-                        balance: { increment: total }
-                    }
-                })
-            }
+        await prisma.order.update({
+            where: { id: orderId },
+            data: { status: newStatus }
         })
 
         revalidatePath('/admin/orders')
-        revalidatePath('/admin/clients') // Balance changes
+        revalidatePath('/admin/clients')
     }
 
     return (
@@ -65,10 +41,11 @@ export default async function AdminOrdersPage() {
                                 <div className="flex items-center gap-2 mb-1">
                                     <h3 className="font-semibold text-white">#{order.id.slice(0, 8)}</h3>
                                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${order.status === 'DELIVERED' ? 'bg-green-500/20 text-green-400' :
-                                        order.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400' :
-                                            'bg-blue-500/20 text-blue-400'
+                                        order.status === 'PARTIALLY_DELIVERED' ? 'bg-indigo-500/20 text-indigo-400' :
+                                            order.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                'bg-blue-500/20 text-blue-400'
                                         }`}>
-                                        {order.status}
+                                        {order.status === 'PARTIALLY_DELIVERED' ? 'ENTREGA PARCIAL' : order.status}
                                     </span>
                                 </div>
                                 <p className="text-slate-400 text-sm">Cliente: <span className="text-white">{order.user.name}</span></p>
