@@ -1,26 +1,23 @@
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import Link from "next/link";
+import { updateOrderStatus } from "./actions";
 
 export default async function AdminOrdersPage() {
-    const orders = await prisma.order.findMany({
+    const rawOrders = await prisma.order.findMany({
         include: { user: true, items: { include: { variant: { include: { product: true } } } } },
         orderBy: { createdAt: 'desc' }
     });
 
-    async function updateStatus(formData: FormData) {
-        'use server'
-        const orderId = formData.get('orderId') as string
-        const newStatus = formData.get('status') as string
-
-        await prisma.order.update({
-            where: { id: orderId },
-            data: { status: newStatus }
-        })
-
-        revalidatePath('/admin/orders')
-        revalidatePath('/admin/clients')
-    }
+    // Convert to plain objects to avoid Decimal serialization issues
+    const orders = rawOrders.map(order => ({
+        ...order,
+        total: order.total.toString(),
+        items: order.items.map(item => ({
+            ...item,
+            price: item.price.toString(),
+            ledSurchargeSnapshot: item.ledSurchargeSnapshot.toString()
+        }))
+    }));
 
     return (
         <div className="space-y-6">
@@ -63,22 +60,22 @@ export default async function AdminOrdersPage() {
                                 </Link>
 
                                 {!isDelivered && (
-                                    <form action={updateStatus} className="flex gap-2">
-                                        <input type="hidden" name="orderId" value={order.id} />
-                                        <input type="hidden" name="userId" value={order.user.id} />
-                                        <input type="hidden" name="total" value={order.total.toString()} />
-
+                                    <div className="flex gap-2">
                                         {order.status === 'PENDING' && (
-                                            <button name="status" value="IN_PREPARATION" className="px-3 py-1 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded text-sm transition-colors">
-                                                Preparar
-                                            </button>
+                                            <form action={updateOrderStatus.bind(null, order.id, 'IN_PREPARATION')}>
+                                                <button type="submit" className="px-3 py-1 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded text-sm transition-colors">
+                                                    Preparar
+                                                </button>
+                                            </form>
                                         )}
                                         {order.status === 'IN_PREPARATION' && (
-                                            <button name="status" value="DELIVERED" className="px-3 py-1 bg-green-600/20 text-green-400 hover:bg-green-600/30 rounded text-sm transition-colors border border-green-500/50">
-                                                Entregar
-                                            </button>
+                                            <form action={updateOrderStatus.bind(null, order.id, 'DELIVERED')}>
+                                                <button type="submit" className="px-3 py-1 bg-green-600/20 text-green-400 hover:bg-green-600/30 rounded text-sm transition-colors border border-green-500/50">
+                                                    Entregar
+                                                </button>
+                                            </form>
                                         )}
-                                    </form>
+                                    </div>
                                 )}
                                 {isDelivered && (
                                     <span className="text-sm text-green-500 font-medium flex items-center gap-1">

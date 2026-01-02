@@ -88,3 +88,19 @@ export async function registerDelivery(orderId: string, deliveryItems: DeliveryI
         return { success: false, error: error.message || "Error al registrar la entrega" };
     }
 }
+
+export async function updateOrderStatus(orderId: string, newStatus: string) {
+    try {
+        await prisma.order.update({
+            where: { id: orderId },
+            data: { status: newStatus }
+        })
+
+        revalidatePath('/admin/orders')
+        revalidatePath('/admin/clients')
+        return { success: true }
+    } catch (error) {
+        console.error("Error updating order status:", error)
+        return { success: false, error: "Error al actualizar el estado" }
+    }
+}

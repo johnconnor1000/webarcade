@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import OrderItemToggle from "../orders/[id]/item-toggle";
 
 export default async function ProductionPage() {
-    const pendingItems = await prisma.orderItem.findMany({
+    const rawPendingItems = await prisma.orderItem.findMany({
         where: {
             isReady: false,
             order: {
@@ -29,6 +29,16 @@ export default async function ProductionPage() {
             }
         }
     });
+
+    const pendingItems = rawPendingItems.map(item => ({
+        ...item,
+        price: item.price.toString(),
+        ledSurchargeSnapshot: item.ledSurchargeSnapshot.toString(),
+        order: {
+            ...item.order,
+            total: item.order.total.toString()
+        }
+    }));
 
     return (
         <div className="space-y-6">
