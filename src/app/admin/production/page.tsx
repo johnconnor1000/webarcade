@@ -14,18 +14,22 @@ export default async function ProductionPage() {
         include: {
             variant: {
                 include: {
-                    product: true
+                    product: {
+                        select: { name: true }
+                    }
                 }
             },
             order: {
                 include: {
-                    user: true
+                    user: {
+                        select: { name: true }
+                    }
                 }
             }
         },
         orderBy: {
             order: {
-                createdAt: 'asc' // Oldest orders first
+                createdAt: 'asc'
             }
         }
     });

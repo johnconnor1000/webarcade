@@ -4,7 +4,11 @@ import { updateOrderStatus } from "./actions";
 
 export default async function AdminOrdersPage() {
     const rawOrders = await prisma.order.findMany({
-        include: { user: true, items: { include: { variant: { include: { product: true } } } } },
+        include: {
+            user: {
+                select: { id: true, name: true }
+            }
+        },
         orderBy: { createdAt: 'desc' }
     });
 
