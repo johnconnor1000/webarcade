@@ -61,7 +61,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                         <h2 className="text-lg font-semibold mb-2 text-white">Información del Pedido</h2>
                         <p className="text-slate-300"><span className="font-medium text-slate-400">ID:</span> {serializedOrder.id}</p>
                         <p className="text-slate-300"><span className="font-medium text-slate-400">Estado:</span> <span className="px-2 py-1 rounded bg-blue-500/20 text-blue-400 text-sm">{serializedOrder.status}</span></p>
-                        <p className="text-slate-300"><span className="font-medium text-slate-400">Fecha:</span> {serializedOrder.createdAt.toLocaleDateString()}</p>
+                        <p className="text-slate-300"><span className="font-medium text-slate-400">Fecha:</span> {new Date(serializedOrder.createdAt).toLocaleDateString()}</p>
                         <p className="text-slate-300"><span className="font-medium text-slate-400">Total:</span> ${Number(serializedOrder.total).toFixed(2)}</p>
                     </div>
                 </div>
