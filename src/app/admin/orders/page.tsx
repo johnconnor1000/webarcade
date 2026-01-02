@@ -16,11 +16,11 @@ export default async function AdminOrdersPage() {
     const orders = rawOrders.map(order => ({
         id: order.id,
         status: order.status,
-        total: order.total.toString(),
-        createdAt: order.createdAt.toISOString(),
+        total: order.total ? order.total.toString() : '0',
+        createdAt: order.createdAt ? order.createdAt.toISOString() : new Date().toISOString(),
         user: {
-            id: order.user.id,
-            name: order.user.name
+            id: order.user?.id || '',
+            name: order.user?.name || 'Cliente desconocido'
         }
     }));
 
@@ -67,14 +67,14 @@ export default async function AdminOrdersPage() {
                                 {!isDelivered && (
                                     <div className="flex gap-2">
                                         {order.status === 'PENDING' && (
-                                            <form action={updateOrderStatus.bind(null, order.id, 'IN_PREPARATION')}>
+                                            <form action={updateOrderStatus.bind(null, order.id || '', 'IN_PREPARATION')}>
                                                 <button type="submit" className="px-3 py-1 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded text-sm transition-colors">
                                                     Preparar
                                                 </button>
                                             </form>
                                         )}
                                         {order.status === 'IN_PREPARATION' && (
-                                            <form action={updateOrderStatus.bind(null, order.id, 'DELIVERED')}>
+                                            <form action={updateOrderStatus.bind(null, order.id || '', 'DELIVERED')}>
                                                 <button type="submit" className="px-3 py-1 bg-green-600/20 text-green-400 hover:bg-green-600/30 rounded text-sm transition-colors border border-green-500/50">
                                                     Entregar
                                                 </button>

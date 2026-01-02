@@ -39,15 +39,15 @@ export default async function ProductionPage() {
         quantity: item.quantity,
         isReady: item.isReady,
         variant: {
-            name: item.variant.name,
+            name: item.variant?.name || 'Incompleta',
             product: {
-                name: item.variant.product.name
+                name: item.variant?.product?.name || 'Producto sin nombre'
             }
         },
         order: {
-            id: item.order.id,
+            id: item.order?.id || '',
             user: {
-                name: item.order.user.name
+                name: item.order?.user?.name || 'Cliente desconocido'
             }
         }
     }));

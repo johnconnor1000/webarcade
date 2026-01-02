@@ -33,22 +33,25 @@ export default async function AdminStatsPage({
 
     // Aggregate data by variant (not just product)
     const statsByVariant = orderItems.reduce((acc, item) => {
-        const product = item.variant.product;
+        const product = item.variant?.product;
         const variant = item.variant;
+
+        if (!variant || !product) return acc; // Skip incomplete data
+
         const key = variant.id;
 
         if (!acc[key]) {
             acc[key] = {
-                productName: product.name,
-                variantName: variant.name,
-                displayName: `${product.name} - ${variant.name}`,
+                productName: product.name || 'Sin nombre',
+                variantName: variant.name || 'Sin variante',
+                displayName: `${product.name || 'Sin nombre'} - ${variant.name || 'Sin variante'}`,
                 units: 0,
                 revenue: 0,
                 category: product.category || 'Sin categoría'
             };
         }
-        acc[key].units += item.quantity;
-        acc[key].revenue += Number(item.price) * item.quantity;
+        acc[key].units += item.quantity || 0;
+        acc[key].revenue += Number(item.price || 0) * (item.quantity || 0);
         return acc;
     }, {} as Record<string, { productName: string, variantName: string, displayName: string, units: number, revenue: number, category: string }>);
 
