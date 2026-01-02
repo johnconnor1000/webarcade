@@ -16,25 +16,25 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
     const serializedOrder = {
         id: order.id,
         status: order.status,
-        total: order.total.toString(),
-        createdAt: order.createdAt.toISOString(),
+        total: order.total ? order.total.toString() : '0',
+        createdAt: order.createdAt ? order.createdAt.toISOString() : new Date().toISOString(),
         notes: order.notes,
         user: {
-            name: order.user.name,
-            email: order.user.email,
-            phone: order.user.phone
+            name: order.user?.name || 'Cliente desconocido',
+            email: order.user?.email || '',
+            phone: order.user?.phone || ''
         },
         items: order.items.map(item => ({
             id: item.id,
-            quantity: item.quantity,
-            deliveredQuantity: item.deliveredQuantity,
-            price: item.price.toString(),
+            quantity: item.quantity || 0,
+            deliveredQuantity: item.deliveredQuantity || 0,
+            price: item.price ? item.price.toString() : '0',
             isReady: item.isReady,
-            buttonsType: item.buttonsType,
+            buttonsType: item.buttonsType || 'COMMON',
             variant: {
-                name: item.variant.name,
+                name: item.variant?.name || 'N/A',
                 product: {
-                    name: item.variant.product.name
+                    name: item.variant?.product?.name || 'Producto sin nombre'
                 }
             }
         }))
