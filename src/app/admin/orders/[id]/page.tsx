@@ -12,6 +12,17 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
         notFound()
     }
 
+    // Convert to plain objects to avoid Decimal serialization issues
+    const serializedOrder = {
+        ...order,
+        total: order.total.toString(),
+        items: order.items.map(item => ({
+            ...item,
+            price: item.price.toString(),
+            ledSurchargeSnapshot: item.ledSurchargeSnapshot.toString()
+        }))
+    }
+
     return (
         <div className="container mx-auto p-4 space-y-6">
             <div className="flex justify-between items-center">
@@ -25,16 +36,16 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <h2 className="text-lg font-semibold mb-2 text-white">Información del Cliente</h2>
-                        <p className="text-slate-300"><span className="font-medium text-slate-400">Nombre:</span> {order.user.name || 'N/A'}</p>
-                        <p className="text-slate-300"><span className="font-medium text-slate-400">Email:</span> {order.user.email}</p>
-                        <p className="text-slate-300"><span className="font-medium text-slate-400">Teléfono:</span> {order.user.phone || 'N/A'}</p>
+                        <p className="text-slate-300"><span className="font-medium text-slate-400">Nombre:</span> {serializedOrder.user.name || 'N/A'}</p>
+                        <p className="text-slate-300"><span className="font-medium text-slate-400">Email:</span> {serializedOrder.user.email}</p>
+                        <p className="text-slate-300"><span className="font-medium text-slate-400">Teléfono:</span> {serializedOrder.user.phone || 'N/A'}</p>
                     </div>
                     <div>
                         <h2 className="text-lg font-semibold mb-2 text-white">Información del Pedido</h2>
-                        <p className="text-slate-300"><span className="font-medium text-slate-400">ID:</span> {order.id}</p>
-                        <p className="text-slate-300"><span className="font-medium text-slate-400">Estado:</span> <span className="px-2 py-1 rounded bg-blue-500/20 text-blue-400 text-sm">{order.status}</span></p>
-                        <p className="text-slate-300"><span className="font-medium text-slate-400">Fecha:</span> {order.createdAt.toLocaleDateString()}</p>
-                        <p className="text-slate-300"><span className="font-medium text-slate-400">Total:</span> ${Number(order.total).toFixed(2)}</p>
+                        <p className="text-slate-300"><span className="font-medium text-slate-400">ID:</span> {serializedOrder.id}</p>
+                        <p className="text-slate-300"><span className="font-medium text-slate-400">Estado:</span> <span className="px-2 py-1 rounded bg-blue-500/20 text-blue-400 text-sm">{serializedOrder.status}</span></p>
+                        <p className="text-slate-300"><span className="font-medium text-slate-400">Fecha:</span> {serializedOrder.createdAt.toLocaleDateString()}</p>
+                        <p className="text-slate-300"><span className="font-medium text-slate-400">Total:</span> ${Number(serializedOrder.total).toFixed(2)}</p>
                     </div>
                 </div>
 
@@ -53,7 +64,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                             </tr>
                         </thead>
                         <tbody>
-                            {order.items.map((item) => (
+                            {serializedOrder.items.map((item) => (
                                 <tr key={item.id} className="hover:bg-slate-800 border-b border-slate-700 text-slate-300">
                                     <td className="p-3">
                                         {item.variant.product.name}
@@ -77,7 +88,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                                         <div className="flex flex-col gap-2">
                                             <OrderItemToggle itemId={item.id} isReady={item.isReady} />
                                             <DeliverItem
-                                                orderId={order.id}
+                                                orderId={serializedOrder.id}
                                                 itemId={item.id}
                                                 productName={item.variant.product.name}
                                                 variantName={item.variant.name}
@@ -92,10 +103,10 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                     </table>
                 </div>
 
-                {order.notes && (
+                {serializedOrder.notes && (
                     <div className="mt-6 bg-yellow-900/10 p-4 rounded border border-yellow-800/30">
                         <h3 className="font-semibold text-yellow-500">Notas:</h3>
-                        <p className="text-slate-300">{order.notes}</p>
+                        <p className="text-slate-300">{serializedOrder.notes}</p>
                     </div>
                 )}
             </div>
