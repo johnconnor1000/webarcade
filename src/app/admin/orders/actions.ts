@@ -89,8 +89,13 @@ export async function registerDelivery(orderId: string, deliveryItems: DeliveryI
     }
 }
 
-export async function updateOrderStatus(orderId: string, newStatus: string) {
+export async function updateOrderStatus(formData: FormData) {
     try {
+        const orderId = formData.get('orderId') as string;
+        const newStatus = formData.get('newStatus') as string;
+
+        if (!orderId || !newStatus) throw new Error("Datos insuficientes para actualizar estado");
+
         await prisma.order.update({
             where: { id: orderId },
             data: { status: newStatus }
@@ -98,9 +103,7 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
 
         revalidatePath('/admin/orders')
         revalidatePath('/admin/clients')
-        return { success: true }
     } catch (error) {
         console.error("Error updating order status:", error)
-        return { success: false, error: "Error al actualizar el estado" }
     }
 }

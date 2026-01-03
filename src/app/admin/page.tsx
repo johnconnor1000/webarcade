@@ -37,17 +37,17 @@ export default async function AdminDashboardPage() {
         ...recentOrders.map(o => ({
             id: o.id,
             type: 'ORDER',
-            user: o.user.name,
-            amount: Number(o.total),
-            date: o.createdAt,
+            user: o.user?.name || 'Cliente desconocido',
+            amount: Number(o.total || 0),
+            date: o.createdAt ? new Date(o.createdAt) : new Date(),
             status: o.status
         })),
         ...recentPayments.map(p => ({
             id: p.id,
             type: 'PAYMENT',
-            user: p.user.name,
-            amount: Number(p.amount),
-            date: p.createdAt,
+            user: p.user?.name || 'Cliente desconocido',
+            amount: Number(p.amount || 0),
+            date: p.createdAt ? new Date(p.createdAt) : new Date(),
             method: p.method
         }))
     ].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 5);

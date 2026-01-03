@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { updateOrderStatus } from "./actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminOrdersPage() {
     const rawOrders = await prisma.order.findMany({
         include: {
@@ -57,7 +59,7 @@ export default async function AdminOrdersPage() {
                             <div className="flex items-center gap-6">
                                 <div className="text-right">
                                     <p className="text-xs text-slate-400 uppercase tracking-wider">Total</p>
-                                    <p className="text-xl font-bold text-white">${order.total.toString()}</p>
+                                    <p className="text-xl font-bold text-white">${String(order.total)}</p>
                                 </div>
 
                                 <Link href={`/admin/orders/${order.id}`} className="px-3 py-1 bg-gray-600/20 text-gray-300 hover:bg-gray-600/30 rounded text-sm transition-colors border border-white/10">
@@ -67,14 +69,18 @@ export default async function AdminOrdersPage() {
                                 {!isDelivered && (
                                     <div className="flex gap-2">
                                         {order.status === 'PENDING' && (
-                                            <form action={updateOrderStatus.bind(null, order.id || '', 'IN_PREPARATION')}>
+                                            <form action={updateOrderStatus}>
+                                                <input type="hidden" name="orderId" value={order.id || ''} />
+                                                <input type="hidden" name="newStatus" value="IN_PREPARATION" />
                                                 <button type="submit" className="px-3 py-1 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded text-sm transition-colors">
                                                     Preparar
                                                 </button>
                                             </form>
                                         )}
                                         {order.status === 'IN_PREPARATION' && (
-                                            <form action={updateOrderStatus.bind(null, order.id || '', 'DELIVERED')}>
+                                            <form action={updateOrderStatus}>
+                                                <input type="hidden" name="orderId" value={order.id || ''} />
+                                                <input type="hidden" name="newStatus" value="DELIVERED" />
                                                 <button type="submit" className="px-3 py-1 bg-green-600/20 text-green-400 hover:bg-green-600/30 rounded text-sm transition-colors border border-green-500/50">
                                                     Entregar
                                                 </button>

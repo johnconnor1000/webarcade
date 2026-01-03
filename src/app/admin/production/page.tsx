@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
 import OrderItemToggle from "../orders/[id]/item-toggle";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductionPage() {
     const rawPendingItems = await prisma.orderItem.findMany({
         where: {
