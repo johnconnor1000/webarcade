@@ -243,9 +243,9 @@ export default async function AdminStatsPage({
                     <Link href="/admin/stats" className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors font-medium">
                         Ver últimos 30 días
                     </Link>
-                    <button onClick={() => window.location.reload()} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors font-medium">
+                    <Link href="/admin/stats" className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors font-medium">
                         Reintentar
-                    </button>
+                    </Link>
                 </div>
             </div>
         );

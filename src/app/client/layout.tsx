@@ -22,7 +22,7 @@ export default async function ClientLayout({
                                 <Link href="/client" className="text-xl font-bold tracking-tight text-white">
                                     Arcade
                                 </Link>
-                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-500 font-mono leading-none">v1.0.8-FORCE-REDEPLOY</span>
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-500 font-mono leading-none">v1.0.9-resilient</span>
                             </div>
 
                             {/* Navigation Links */}

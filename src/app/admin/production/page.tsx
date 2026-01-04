@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import OrderItemToggle from "../orders/[id]/item-toggle";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +69,7 @@ export default async function ProductionPage() {
                 <div className="flex items-center gap-4">
                     <h1 className="text-3xl font-bold text-white tracking-tight">Producción (Pendientes)</h1>
                     {/* Cache bust: 13:10 */}
-                    <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.6-partials</span>
+                    <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.9-resilient</span>
                 </div>
 
                 <div className="bg-slate-900 border border-slate-800 shadow rounded-lg overflow-hidden">
@@ -129,12 +130,12 @@ export default async function ProductionPage() {
                 <p className="text-red-400/80 max-w-md mx-auto">
                     No se pudo cargar la lista de producción. Esto puede deberse a datos inconsistentes en la base de datos.
                 </p>
-                <button
-                    onClick={() => window.location.reload()}
-                    className="mt-6 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm font-medium"
+                <Link
+                    href="/admin/production"
+                    className="mt-6 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm font-medium inline-block"
                 >
-                    Reintentar cargar página
-                </button>
+                    Recargar lista
+                </Link>
             </div>
         );
     }

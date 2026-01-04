@@ -26,8 +26,8 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
         },
         items: order.items.map(item => ({
             id: item.id,
-            quantity: item.quantity || 0,
-            deliveredQuantity: (item as any).deliveredQuantity || 0,
+            quantity: Number(item.quantity || 0),
+            deliveredQuantity: Number((item as any).deliveredQuantity || 0),
             price: item.price ? item.price.toString() : '0',
             isReady: item.isReady,
             buttonsType: item.buttonsType || 'COMMON',
