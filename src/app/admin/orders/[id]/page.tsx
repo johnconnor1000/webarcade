@@ -9,7 +9,13 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
     const order = await getOrderDetails(id)
 
     if (!order) {
-        notFound()
+        return (
+            <div className="p-12 text-center">
+                <h2 className="text-2xl font-bold text-white mb-4">Error al cargar pedido (v1.0.11-sync)</h2>
+                <p className="text-red-400 mb-8">No se pudo encontrar el pedido o hubo un error de base de datos.</p>
+                <Link href="/admin/orders" className="text-indigo-400 hover:text-indigo-300">Volver a la lista</Link>
+            </div>
+        );
     }
 
     // Convert to plain objects to avoid Decimal serialization issues
