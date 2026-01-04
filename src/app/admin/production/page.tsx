@@ -38,9 +38,15 @@ export default async function ProductionPage() {
         });
 
         const pendingItems = (rawPendingItems || []).map(item => {
+            const quantity = Number(item.quantity || 0);
+            const delivered = Number((item as any).deliveredQuantity || 0);
+            const pending = quantity - delivered;
+
             return {
                 id: String(item.id || ''),
-                quantity: Number(item.quantity || 0),
+                quantity,
+                delivered,
+                pending,
                 isReady: Boolean(item.isReady),
                 variant: {
                     name: String(item.variant?.name || 'Incompleta'),
@@ -62,7 +68,7 @@ export default async function ProductionPage() {
                 <div className="flex items-center gap-4">
                     <h1 className="text-3xl font-bold text-white tracking-tight">Producción (Pendientes)</h1>
                     {/* Cache bust: 13:10 */}
-                    <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.5-final-check</span>
+                    <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.6-partials</span>
                 </div>
 
                 <div className="bg-slate-900 border border-slate-800 shadow rounded-lg overflow-hidden">
@@ -82,7 +88,12 @@ export default async function ProductionPage() {
                                     <tr key={item.id} className="hover:bg-slate-800 border-b border-slate-700 text-slate-300">
                                         <td className="p-3 font-medium text-white">{item.variant.product.name}</td>
                                         <td className="p-3 text-slate-400">{item.variant.name}</td>
-                                        <td className="p-3 text-white font-bold">{item.quantity}</td>
+                                        <td className="p-3">
+                                            <div className="flex flex-col">
+                                                <span className="text-white font-bold text-lg">{item.pending}</span>
+                                                <span className="text-xs text-slate-500">de {item.quantity} total</span>
+                                            </div>
+                                        </td>
                                         <td className="p-3 text-sm">
                                             <div className="flex flex-col">
                                                 <span className="text-white font-medium">#{String(item.order.id).slice(0, 8)}</span>

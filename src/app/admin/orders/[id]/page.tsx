@@ -27,7 +27,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
         items: order.items.map(item => ({
             id: item.id,
             quantity: item.quantity || 0,
-            deliveredQuantity: item.deliveredQuantity || 0,
+            deliveredQuantity: (item as any).deliveredQuantity || 0,
             price: item.price ? item.price.toString() : '0',
             isReady: item.isReady,
             buttonsType: item.buttonsType || 'COMMON',
@@ -71,47 +71,66 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-800/50">
-                                <th className="p-3 border-b border-slate-700 text-slate-400">Producto</th>
-                                <th className="p-3 border-b border-slate-700 text-slate-400">Variante</th>
-                                <th className="p-3 border-b border-slate-700 text-slate-400 text-center">Pedido</th>
-                                <th className="p-3 border-b border-slate-700 text-slate-400 text-center">Entregado</th>
-                                <th className="p-3 border-b border-slate-700 text-slate-400">Precio Unit.</th>
-                                <th className="p-3 border-b border-slate-700 text-slate-400">Subtotal</th>
-                                <th className="p-3 border-b border-slate-700 text-slate-400">Acciones / Entrega</th>
+                                <th className="p-3 border-b border-slate-700 text-slate-400">Producto / Variante</th>
+                                <th className="p-3 border-b border-slate-700 text-slate-400 text-center">Progreso de Entrega</th>
+                                <th className="p-3 border-b border-slate-700 text-slate-400 text-center">Finanzas</th>
+                                <th className="p-3 border-b border-slate-700 text-slate-400 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {serializedOrder.items.map((item) => (
+                            {serializedOrder.items.map((item: any) => (
                                 <tr key={item.id} className="hover:bg-slate-800 border-b border-slate-700 text-slate-300">
                                     <td className="p-3">
-                                        {item.variant.product.name}
-                                        {item.buttonsType === 'LED' && (
-                                            <span className="ml-2 text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase font-bold tracking-tighter">
-                                                LED
-                                            </span>
-                                        )}
+                                        <div className="flex flex-col">
+                                            <span className="text-white font-medium">{item.variant.product.name}</span>
+                                            <span className="text-xs text-slate-500">{item.variant.name}</span>
+                                            {item.buttonsType === 'LED' && (
+                                                <span className="mt-1 w-fit text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase font-bold tracking-tighter">
+                                                    LED
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
-                                    <td className="p-3">{item.variant.name}</td>
-                                    <td className="p-3 text-center">{item.quantity}</td>
                                     <td className="p-3 text-center">
-                                        <span className={`font-bold ${item.deliveredQuantity >= item.quantity ? 'text-green-500' : item.deliveredQuantity > 0 ? 'text-yellow-500' : 'text-slate-500'}`}>
-                                            {item.deliveredQuantity}
-                                        </span>
+                                        <div className="flex flex-col items-center">
+                                            <span className={`font-bold text-lg ${item.deliveredQuantity >= item.quantity ? 'text-green-500' : item.deliveredQuantity > 0 ? 'text-yellow-500' : 'text-slate-500'}`}>
+                                                {item.deliveredQuantity} / {item.quantity}
+                                            </span>
+                                            <span className="text-[10px] uppercase tracking-wider font-bold">
+                                                {item.deliveredQuantity >= item.quantity ? (
+                                                    <span className="text-green-500/80">Completo</span>
+                                                ) : item.deliveredQuantity > 0 ? (
+                                                    <span className="text-yellow-500/80">Parcial</span>
+                                                ) : (
+                                                    <span className="text-slate-500">Pendiente</span>
+                                                )}
+                                            </span>
+                                        </div>
                                     </td>
-                                    <td className="p-3">${Number(item.price).toFixed(2)}</td>
-                                    <td className="p-3 font-medium text-white">${(Number(item.price) * item.quantity).toFixed(2)}</td>
+                                    <td className="p-3 text-center">
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-sm text-slate-400">${Number(item.price).toLocaleString('es-AR')} c/u</span>
+                                            <span className="text-xs text-white font-medium">Subtotal: ${(Number(item.price) * item.quantity).toLocaleString('es-AR')}</span>
+                                        </div>
+                                    </td>
 
-                                    <td className="p-3">
-                                        <div className="flex flex-col gap-2">
-                                            <OrderItemToggle itemId={item.id} isReady={item.isReady} />
-                                            <DeliverItem
-                                                orderId={serializedOrder.id}
-                                                itemId={item.id}
-                                                productName={item.variant.product.name}
-                                                variantName={item.variant.name}
-                                                orderedQuantity={item.quantity}
-                                                deliveredQuantity={item.deliveredQuantity}
-                                            />
+                                    <td className="p-3 text-center">
+                                        <div className="flex flex-col gap-3 items-center">
+                                            <div className="flex flex-col gap-1 w-full max-w-[120px]">
+                                                <span className="text-[10px] text-slate-500 uppercase font-bold">Producción</span>
+                                                <OrderItemToggle itemId={item.id} isReady={item.isReady} />
+                                            </div>
+                                            <div className="flex flex-col gap-1 w-full max-w-[120px]">
+                                                <span className="text-[10px] text-slate-500 uppercase font-bold">Entrega</span>
+                                                <DeliverItem
+                                                    orderId={serializedOrder.id}
+                                                    itemId={item.id}
+                                                    productName={item.variant.product.name}
+                                                    variantName={item.variant.name}
+                                                    orderedQuantity={item.quantity}
+                                                    deliveredQuantity={item.deliveredQuantity}
+                                                />
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>

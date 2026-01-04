@@ -31,7 +31,7 @@ export default async function AdminOrdersPage() {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <h1 className="text-3xl font-bold text-white">Pedidos</h1>
-                    <span className="text-[10px] text-slate-700">v1.0.3-defensive</span>
+                    <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.6-partials</span>
                 </div>
                 <Link href="/admin/orders/new" className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
                     + Nuevo Pedido

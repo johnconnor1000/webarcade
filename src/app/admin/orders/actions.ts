@@ -27,7 +27,7 @@ export async function registerDelivery(orderId: string, deliveryItems: DeliveryI
                 const item = order.items.find(i => i.id === deliveryItem.itemId);
                 if (!item) continue;
 
-                const newDeliveredQuantity = item.deliveredQuantity + deliveryItem.quantityToDeliver;
+                const newDeliveredQuantity = (item as any).deliveredQuantity + deliveryItem.quantityToDeliver;
 
                 if (newDeliveredQuantity > item.quantity) {
                     throw new Error(`Cantidad a entregar para item ${item.id} excede el total pedido`);
@@ -36,7 +36,7 @@ export async function registerDelivery(orderId: string, deliveryItems: DeliveryI
                 // Update the item
                 await tx.orderItem.update({
                     where: { id: item.id },
-                    data: { deliveredQuantity: newDeliveredQuantity }
+                    data: { deliveredQuantity: newDeliveredQuantity } as any
                 });
 
                 // Add to total delivered value
@@ -51,7 +51,7 @@ export async function registerDelivery(orderId: string, deliveryItems: DeliveryI
             const processedItemIds = deliveryItems.map(di => di.itemId);
             for (const item of order.items) {
                 if (!processedItemIds.includes(item.id)) {
-                    if (item.deliveredQuantity < item.quantity) {
+                    if ((item as any).deliveredQuantity < item.quantity) {
                         allItemsFullyDelivered = false;
                     }
                 }
@@ -95,6 +95,28 @@ export async function updateOrderStatus(formData: FormData) {
         const newStatus = formData.get('newStatus') as string;
 
         if (!orderId || !newStatus) throw new Error("Datos insuficientes para actualizar estado");
+
+        // If marking as DELIVERED, we MUST deliver all remaining items to update balance correctly
+        if (newStatus === 'DELIVERED') {
+            const order = await prisma.order.findUnique({
+                where: { id: orderId },
+                include: { items: true }
+            });
+
+            if (order) {
+                const pendingItems = order.items
+                    .filter(item => (item.quantity - ((item as any).deliveredQuantity || 0)) > 0)
+                    .map(item => ({
+                        itemId: item.id,
+                        quantityToDeliver: item.quantity - ((item as any).deliveredQuantity || 0)
+                    }));
+
+                if (pendingItems.length > 0) {
+                    await registerDelivery(orderId, pendingItems);
+                    return; // registerDelivery handles revalidation
+                }
+            }
+        }
 
         await prisma.order.update({
             where: { id: orderId },
