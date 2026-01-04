@@ -38,16 +38,21 @@ export default async function ClientStatementPage() {
         status: String(order.status || 'PENDING')
     }));
 
-    const paymentTransactions = user.payments.map(payment => ({
-        id: payment.id,
-        date: payment.createdAt,
+    const paymentTransactions = rawUser.payments.map((payment: any) => ({
+        id: String(payment.id || ''),
+        date: payment.createdAt instanceof Date ? payment.createdAt.toISOString() : new Date().toISOString(),
         type: 'PAYMENT' as const,
-        amount: Number(payment.amount),
-        description: `Pago registrado (${payment.method})`,
+        amount: Number(payment.amount || 0),
+        description: `Pago registrado (${String(payment.method || 'OTROS')})`,
     }));
 
+    const user = {
+        name: String(rawUser.name || rawUser.email || 'Cliente'),
+        balance: Number(rawUser.balance || 0)
+    };
+
     const allTransactions = [...orderTransactions, ...paymentTransactions].sort((a, b) =>
-        b.date.getTime() - a.date.getTime()
+        new Date(b.date).getTime() - new Date(a.date).getTime()
     );
 
     return (
@@ -58,8 +63,8 @@ export default async function ClientStatementPage() {
             </div>
 
             <Statement
-                userName={user.name || user.email}
-                currentBalance={Number(user.balance)}
+                userName={user.name}
+                currentBalance={user.balance}
                 transactions={allTransactions}
             />
         </div>

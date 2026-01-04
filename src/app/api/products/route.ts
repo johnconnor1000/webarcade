@@ -26,19 +26,29 @@ export async function GET() {
             );
         }
 
-        // Apply surcharge if user is retailer
+        // Apply surcharge and sanitize for JSON serialization
         const products = filteredProducts.map(product => {
-            let basePrice = Number(product.basePrice);
+            let basePrice = Number(product.basePrice || 0);
             if (user?.isRetailer && Number(user.surchargePercentage) > 0) {
                 basePrice = basePrice * (1 + Number(user.surchargePercentage) / 100);
             }
 
             return {
-                ...product,
+                id: String(product.id || ''),
+                name: String(product.name || 'Sin nombre'),
+                description: product.description,
+                imageUrl: product.imageUrl,
+                category: product.category,
+                subcategory: product.subcategory,
                 basePrice: basePrice.toFixed(2),
-                variants: product.variants.map(variant => ({
-                    ...variant,
-                    price: basePrice.toFixed(2) // variants share the product basePrice
+                ledSurcharge: product.ledSurcharge ? String(product.ledSurcharge) : '0',
+                createdAt: product.createdAt instanceof Date ? product.createdAt.toISOString() : undefined,
+                updatedAt: product.updatedAt instanceof Date ? product.updatedAt.toISOString() : undefined,
+                variants: (product.variants || []).map(variant => ({
+                    id: String(variant.id || ''),
+                    productId: String(variant.productId || ''),
+                    name: String(variant.name || 'N/A'),
+                    price: basePrice.toFixed(2)
                 }))
             };
         });

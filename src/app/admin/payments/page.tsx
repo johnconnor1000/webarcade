@@ -51,28 +51,55 @@ export default async function AdminPaymentsPage() {
                     <h2 className="text-lg font-semibold text-white mb-4">Registrar Cobro</h2>
                     <form action={registerPayment} className="space-y-4">
                         <div>
-                            <label className="block text-sm text-slate-400 mb-1">Cliente</label>
-                            <select name="userId" className="w-full bg-slate-900 border border-white/10 rounded px-3 py-2 text-white">
+                            <label htmlFor="userId" className="block text-sm font-medium text-slate-400 mb-1">Cliente</label>
+                            <select
+                                id="userId"
+                                name="userId"
+                                title="Seleccionar Cliente"
+                                className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                required
+                            >
                                 {clients.map(c => (
                                     <option key={c.id} value={c.id}>{c.name}</option>
                                 ))}
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm text-slate-400 mb-1">Monto ($)</label>
-                            <input name="amount" type="number" step="0.01" className="w-full bg-slate-900 border border-white/10 rounded px-3 py-2 text-white" required />
+                            <label htmlFor="amount" className="block text-sm font-medium text-slate-400 mb-1">Monto</label>
+                            <input
+                                id="amount"
+                                name="amount"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                title="Monto del pago"
+                                className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                required
+                            />
                         </div>
                         <div>
-                            <label className="block text-sm text-slate-400 mb-1">Método</label>
-                            <select name="method" className="w-full bg-slate-900 border border-white/10 rounded px-3 py-2 text-white">
+                            <label htmlFor="method" className="block text-sm font-medium text-slate-400 mb-1">Método</label>
+                            <select
+                                id="method"
+                                name="method"
+                                title="Método de pago"
+                                className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                required
+                            >
                                 <option value="CASH">Efectivo</option>
                                 <option value="TRANSFER">Transferencia</option>
                                 <option value="OTHER">Otro</option>
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm text-slate-400 mb-1">Notas</label>
-                            <textarea name="notes" className="w-full bg-slate-900 border border-white/10 rounded px-3 py-2 text-white" rows={2} />
+                            <label htmlFor="notes" className="block text-sm font-medium text-slate-400 mb-1">Notas</label>
+                            <textarea
+                                id="notes"
+                                name="notes"
+                                title="Notas adicionales"
+                                className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                rows={2}
+                            />
                         </div>
 
                         <button type="submit" className="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-2 rounded transition-colors">
