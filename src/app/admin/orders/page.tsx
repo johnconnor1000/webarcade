@@ -16,20 +16,23 @@ export default async function AdminOrdersPage() {
 
     // Convert to strict plain objects to avoid Decimal serialization issues
     const orders = rawOrders.map(order => ({
-        id: order.id,
-        status: order.status,
-        total: order.total ? order.total.toString() : '0',
-        createdAt: order.createdAt ? order.createdAt.toISOString() : new Date().toISOString(),
+        id: String(order.id || ''),
+        status: String(order.status || 'PENDING'),
+        total: order.total ? String(order.total) : '0',
+        createdAt: (order.createdAt instanceof Date) ? order.createdAt.toISOString() : new Date().toISOString(),
         user: {
-            id: order.user?.id || '',
-            name: order.user?.name || 'Cliente desconocido'
+            id: String(order.user?.id || ''),
+            name: String(order.user?.name || 'Cliente desconocido')
         }
     }));
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-white">Pedidos</h1>
+                <div className="flex items-center gap-4">
+                    <h1 className="text-3xl font-bold text-white">Pedidos</h1>
+                    <span className="text-[10px] text-slate-700">v1.0.3-defensive</span>
+                </div>
                 <Link href="/admin/orders/new" className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-lg transition-colors">
                     + Nuevo Pedido
                 </Link>
@@ -43,7 +46,7 @@ export default async function AdminOrdersPage() {
                         <div key={order.id} className="bg-slate-900/50 border border-white/5 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
                                 <div className="flex items-center gap-2 mb-1">
-                                    <h3 className="font-semibold text-white">#{order.id.slice(0, 8)}</h3>
+                                    <h3 className="font-semibold text-white">#{String(order.id || '').slice(0, 8)}</h3>
                                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${order.status === 'DELIVERED' ? 'bg-green-500/20 text-green-400' :
                                         order.status === 'PARTIALLY_DELIVERED' ? 'bg-indigo-500/20 text-indigo-400' :
                                             order.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400' :

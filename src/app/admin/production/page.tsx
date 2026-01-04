@@ -37,19 +37,19 @@ export default async function ProductionPage() {
     });
 
     const pendingItems = rawPendingItems.map(item => ({
-        id: item.id,
-        quantity: item.quantity,
-        isReady: item.isReady,
+        id: String(item.id || ''),
+        quantity: Number(item.quantity || 0),
+        isReady: Boolean(item.isReady),
         variant: {
-            name: item.variant?.name || 'Incompleta',
+            name: String(item.variant?.name || 'Incompleta'),
             product: {
-                name: item.variant?.product?.name || 'Producto sin nombre'
+                name: String(item.variant?.product?.name || 'Producto sin nombre')
             }
         },
         order: {
-            id: item.order?.id || '',
+            id: String(item.order?.id || ''),
             user: {
-                name: item.order?.user?.name || 'Cliente desconocido'
+                name: String(item.order?.user?.name || 'Cliente desconocido')
             }
         }
     }));
