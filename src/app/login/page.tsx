@@ -22,9 +22,14 @@ export default function LoginPage() {
 
             <div className="w-full max-w-md p-8 relative z-10">
                 <div className="text-center mb-8">
-                    <Link href="/" className="inline-block text-4xl font-extrabold tracking-tighter text-white mb-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                    <Link href="/" className="inline-block text-4xl font-extrabold tracking-tighter text-white mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                         Arcade
                     </Link>
+                    <div className="flex justify-center mb-2">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-mono tracking-widest uppercase animate-pulse">
+                            v1.0.8-FORCE-REDEPLOY
+                        </span>
+                    </div>
                     <h2 className="text-slate-300 font-medium">Inicia sesión para continuar</h2>
                 </div>
 
