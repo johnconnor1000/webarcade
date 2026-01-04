@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { formatCurrency } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
     const session = await auth();
 
