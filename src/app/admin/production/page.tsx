@@ -69,7 +69,7 @@ export default async function ProductionPage() {
                 <div className="flex items-center gap-4">
                     <h1 className="text-3xl font-bold text-white tracking-tight">Producción (Pendientes)</h1>
                     {/* Cache bust: 13:10 */}
-                    <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.9-resilient</span>
+                    <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.10-debug</span>
                 </div>
 
                 <div className="bg-slate-900 border border-slate-800 shadow rounded-lg overflow-hidden">
@@ -126,9 +126,9 @@ export default async function ProductionPage() {
                 <svg className="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
-                <h2 className="text-xl font-bold text-white mb-2">Error de Carga (v1.0.4)</h2>
+                <h2 className="text-xl font-bold text-white mb-2">Error de Carga (v1.0.10-debug)</h2>
                 <p className="text-red-400/80 max-w-md mx-auto">
-                    No se pudo cargar la lista de producción. Esto puede deberse a datos inconsistentes en la base de datos.
+                    {error instanceof Error ? error.message : "No se pudo cargar la lista de producción. Esto puede deberse a datos inconsistentes."}
                 </p>
                 <Link
                     href="/admin/production"
