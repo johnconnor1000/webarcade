@@ -25,9 +25,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        {children}
+        <div className="flex-1">
+          {children}
+        </div>
+        <footer className="py-2 text-center border-t border-white/5 bg-slate-950/50">
+          <span className="text-[10px] text-slate-700 font-mono tracking-widest uppercase">
+            Sistema de Pedidos v1.0.4-defensive • {new Date().toLocaleDateString()}
+          </span>
+        </footer>
       </body>
     </html>
   );
