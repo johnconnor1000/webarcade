@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminStatsPage({
     searchParams,
 }: {
@@ -15,7 +17,7 @@ export default async function AdminStatsPage({
         : new Date(new Date().setDate(new Date().getDate() - 30));
 
     // Fetch order items within period
-    const orderItems = await prisma.orderItem.findMany({
+    const rawOrderItems = await prisma.orderItem.findMany({
         where: {
             order: {
                 createdAt: { gte: startDate },
@@ -32,26 +34,26 @@ export default async function AdminStatsPage({
     });
 
     // Aggregate data by variant (not just product)
-    const statsByVariant = orderItems.reduce((acc, item) => {
+    const statsByVariant = rawOrderItems.reduce((acc, item) => {
         const product = item.variant?.product;
         const variant = item.variant;
 
         if (!variant || !product) return acc; // Skip incomplete data
 
-        const key = variant.id;
+        const key = String(variant.id || 'unknown');
 
         if (!acc[key]) {
             acc[key] = {
-                productName: product.name || 'Sin nombre',
-                variantName: variant.name || 'Sin variante',
-                displayName: `${product.name || 'Sin nombre'} - ${variant.name || 'Sin variante'}`,
+                productName: String(product.name || 'Sin nombre'),
+                variantName: String(variant.name || 'Sin variante'),
+                displayName: `${String(product.name || 'Sin nombre')} - ${String(variant.name || 'Sin variante')}`,
                 units: 0,
                 revenue: 0,
-                category: product.category || 'Sin categoría'
+                category: String(product.category || 'Sin categoría')
             };
         }
-        acc[key].units += item.quantity || 0;
-        acc[key].revenue += Number(item.price || 0) * (item.quantity || 0);
+        acc[key].units += Number(item.quantity || 0);
+        acc[key].revenue += Number(item.price || 0) * Number(item.quantity || 0);
         return acc;
     }, {} as Record<string, { productName: string, variantName: string, displayName: string, units: number, revenue: number, category: string }>);
 

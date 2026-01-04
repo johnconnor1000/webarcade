@@ -3,6 +3,8 @@ import CreateProductForm from "./CreateProductForm";
 import ProductItem from "./ProductItem";
 import BulkPriceUpdate from "./BulkPriceUpdate";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminProductsPage() {
     const productsRaw = await prisma.product.findMany({
         orderBy: { createdAt: 'desc' },
@@ -12,12 +14,19 @@ export default async function AdminProductsPage() {
     const categories = Array.from(new Set(productsRaw.map(p => p.category).filter(Boolean))) as string[];
 
     const products = productsRaw.map(product => ({
-        ...product,
-        basePrice: Number(product.basePrice),
+        id: String(product.id || ''),
+        name: String(product.name || 'Sin nombre'),
+        description: product.description,
+        imageUrl: product.imageUrl,
+        category: product.category,
+        subcategory: product.subcategory,
+        basePrice: Number(product.basePrice || 0),
         ledSurcharge: Number(product.ledSurcharge || 0),
-        variants: product.variants.map(variant => ({
-            ...variant,
-            price: Number(variant.price)
+        variants: (product.variants || []).map(variant => ({
+            id: String(variant.id || ''),
+            productId: String(variant.productId || ''),
+            name: String(variant.name || 'N/A'),
+            price: Number(variant.price || 0)
         }))
     }));
 

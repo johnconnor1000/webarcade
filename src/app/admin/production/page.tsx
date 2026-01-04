@@ -36,27 +36,32 @@ export default async function ProductionPage() {
         }
     });
 
-    const pendingItems = rawPendingItems.map(item => ({
-        id: String(item.id || ''),
-        quantity: Number(item.quantity || 0),
-        isReady: Boolean(item.isReady),
-        variant: {
-            name: String(item.variant?.name || 'Incompleta'),
-            product: {
-                name: String(item.variant?.product?.name || 'Producto sin nombre')
+    const pendingItems = rawPendingItems.map(item => {
+        return {
+            id: String(item.id || ''),
+            quantity: Number(item.quantity || 0),
+            isReady: Boolean(item.isReady),
+            variant: {
+                name: String(item.variant?.name || 'Incompleta'),
+                product: {
+                    name: String(item.variant?.product?.name || 'Producto sin nombre')
+                }
+            },
+            order: {
+                id: String(item.order?.id || ''),
+                user: {
+                    name: String(item.order?.user?.name || 'Cliente desconocido')
+                }
             }
-        },
-        order: {
-            id: String(item.order?.id || ''),
-            user: {
-                name: String(item.order?.user?.name || 'Cliente desconocido')
-            }
-        }
-    }));
+        };
+    });
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-white">Producción (Pendientes)</h1>
+            <div className="flex items-center gap-4">
+                <h1 className="text-3xl font-bold text-white">Producción (Pendientes)</h1>
+                <span className="text-[10px] text-slate-700">v1.0.3-defensive</span>
+            </div>
 
             <div className="bg-slate-900 border border-slate-800 shadow rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">

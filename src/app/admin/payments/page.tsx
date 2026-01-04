@@ -1,13 +1,31 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPaymentsPage() {
-    const clients = await prisma.user.findMany({ where: { role: 'CLIENT' } });
-    const payments = await prisma.payment.findMany({
+    const clientsRaw = await prisma.user.findMany({ where: { role: 'CLIENT' } });
+    const paymentsRaw = await prisma.payment.findMany({
         include: { user: true },
         orderBy: { createdAt: 'desc' },
         take: 20
     });
+
+    const clients = clientsRaw.map(c => ({
+        id: String(c.id || ''),
+        name: String(c.name || 'Sin nombre')
+    }));
+
+    const payments = paymentsRaw.map(p => ({
+        id: String(p.id || ''),
+        amount: Number(p.amount || 0),
+        method: String(p.method || 'OTHER'),
+        notes: p.notes,
+        createdAt: p.createdAt instanceof Date ? p.createdAt.toISOString() : new Date().toISOString(),
+        user: {
+            name: String(p.user?.name || 'Cliente desconocido')
+        }
+    }));
 
     async function registerPayment(formData: FormData) {
         'use server'
@@ -114,14 +132,14 @@ export default async function AdminPaymentsPage() {
                     {payments.map((payment) => (
                         <div key={payment.id} className="bg-slate-900/50 border border-white/5 p-4 rounded-xl flex items-center justify-between">
                             <div>
-                                <h3 className="font-semibold text-white">{payment.user?.name || 'Cliente desconocido'}</h3>
+                                <h3 className="font-semibold text-white">{payment.user.name}</h3>
                                 <p className="text-sm text-slate-400">
-                                    {payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'Fecha desconocida'} via {payment.method}
+                                    {new Date(payment.createdAt).toLocaleDateString()} via {payment.method}
                                 </p>
                                 {payment.notes && <p className="text-xs text-slate-500 mt-1">"{payment.notes}"</p>}
                             </div>
                             <div className="text-right">
-                                <span className="text-green-500 font-bold text-lg">+${String(payment.amount)}</span>
+                                <span className="text-green-500 font-bold text-lg">+${payment.amount.toFixed(2)}</span>
                             </div>
                         </div>
                     ))}

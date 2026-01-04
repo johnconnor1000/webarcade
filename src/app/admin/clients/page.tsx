@@ -9,9 +9,13 @@ export default async function AdminClientsPage() {
     });
 
     const clients = clientsRaw.map(client => ({
-        ...client,
-        balance: Number(client.balance),
-        surchargePercentage: Number(client.surchargePercentage),
+        id: String(client.id || ''),
+        name: String(client.name || 'Sin nombre'),
+        email: String(client.email || ''),
+        phone: String(client.phone || ''),
+        balance: Number(client.balance || 0),
+        isRetailer: Boolean(client.isRetailer),
+        surchargePercentage: Number(client.surchargePercentage || 0),
         allowedCategories: client.allowedCategories || []
     }));
 
