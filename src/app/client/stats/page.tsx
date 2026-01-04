@@ -72,7 +72,7 @@ export default async function ClientStatsPage({
 
     const totalOrders = await prisma.order.count({
         where: {
-            userId: user.id,
+            userId: rawUser.id,
             createdAt: { gte: startDate },
             status: { not: 'CANCELED' }
         }
