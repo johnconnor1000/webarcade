@@ -18,9 +18,12 @@ export default async function ClientLayout({
                     <div className="container mx-auto px-4">
                         <div className="flex items-center justify-between h-16">
                             {/* Logo */}
-                            <Link href="/client" className="text-xl font-bold tracking-tight text-white">
-                                Arcade
-                            </Link>
+                            <div className="flex items-center gap-2">
+                                <Link href="/client" className="text-xl font-bold tracking-tight text-white">
+                                    Arcade
+                                </Link>
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-500 font-mono leading-none">v1.0.7-visible</span>
+                            </div>
 
                             {/* Navigation Links */}
                             <div className="hidden md:flex items-center space-x-1">

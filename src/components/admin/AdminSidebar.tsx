@@ -46,9 +46,12 @@ export function AdminSidebar({
         <>
             {/* Mobile Header */}
             <header className="lg:hidden h-16 border-b border-white/5 bg-slate-950 flex items-center justify-between px-4 fixed top-0 left-0 right-0 z-40">
-                <NextLink href="/admin" className="text-lg font-bold tracking-tight text-white">
-                    Arcade
-                </NextLink>
+                <div className="flex items-center gap-2">
+                    <NextLink href="/admin" className="text-lg font-bold tracking-tight text-white">
+                        Arcade
+                    </NextLink>
+                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-600 font-mono leading-none">v1.0.7-visible</span>
+                </div>
                 <button
                     onClick={toggleSidebar}
                     className="p-2 text-slate-400 hover:text-white"
@@ -83,6 +86,7 @@ export function AdminSidebar({
                     <NextLink href="/admin" className="text-xl font-bold tracking-tight text-white">
                         Arcade
                     </NextLink>
+                    <span className="ml-2 text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-600 font-mono leading-none">v1.0.7-visible</span>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto mt-16 lg:mt-0">
