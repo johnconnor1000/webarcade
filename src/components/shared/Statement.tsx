@@ -5,7 +5,7 @@ import { formatCurrency } from '@/lib/utils'
 
 interface Transaction {
     id: string
-    date: Date
+    date: Date | string
     type: 'ORDER' | 'PAYMENT'
     amount: number
     description: string
@@ -66,10 +66,10 @@ export default function Statement({ userName, currentBalance, transactions }: St
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex flex-col">
                                             <span className="text-sm text-white font-medium">
-                                                {tx.date.toLocaleDateString('es-AR')}
+                                                {new Date(tx.date).toLocaleDateString('es-AR')}
                                             </span>
                                             <span className="text-[10px] text-slate-500">
-                                                {tx.date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+                                                {new Date(tx.date).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                         </div>
                                     </td>

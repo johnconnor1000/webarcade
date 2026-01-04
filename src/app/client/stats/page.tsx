@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function ClientStatsPage({
     searchParams,
 }: {
@@ -12,10 +14,10 @@ export default async function ClientStatsPage({
     const session = await auth();
     if (!session?.user?.email) redirect("/login");
 
-    const user = await prisma.user.findUnique({
+    const rawUser = await prisma.user.findUnique({
         where: { email: session.user.email }
     });
-    if (!user) redirect("/login");
+    if (!rawUser) redirect("/login");
 
     const { period } = await searchParams;
     const isHistorical = period === 'all';
@@ -28,7 +30,7 @@ export default async function ClientStatsPage({
     const orderItems = await prisma.orderItem.findMany({
         where: {
             order: {
-                userId: user.id,
+                userId: rawUser.id,
                 createdAt: { gte: startDate },
                 status: { not: 'CANCELED' }
             }
@@ -44,22 +46,25 @@ export default async function ClientStatsPage({
 
     // Aggregate data by variant (not just product)
     const statsByVariant = orderItems.reduce((acc, item) => {
-        const product = item.variant.product;
+        const product = item.variant?.product;
         const variant = item.variant;
-        const key = variant.id;
+
+        if (!variant || !product) return acc; // Skip incomplete data
+
+        const key = String(variant.id || 'unknown');
 
         if (!acc[key]) {
             acc[key] = {
-                productName: product.name,
-                variantName: variant.name,
-                displayName: `${product.name} - ${variant.name}`,
+                productName: String(product.name || 'Sin nombre'),
+                variantName: String(variant.name || 'Sin variante'),
+                displayName: `${String(product.name || 'Sin nombre')} - ${String(variant.name || 'Sin variante')}`,
                 units: 0,
                 totalSpent: 0,
-                category: product.category || 'Sin categoría'
+                category: String(product.category || 'Sin categoría')
             };
         }
-        acc[key].units += item.quantity;
-        acc[key].totalSpent += Number(item.price) * item.quantity;
+        acc[key].units += Number(item.quantity || 0);
+        acc[key].totalSpent += Number(item.price || 0) * Number(item.quantity || 0);
         return acc;
     }, {} as Record<string, { productName: string, variantName: string, displayName: string, units: number, totalSpent: number, category: string }>);
 

@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function ClientDashboardPage() {
     const session = await auth();
 
@@ -11,8 +13,8 @@ export default async function ClientDashboardPage() {
         redirect("/login");
     }
 
-    // Get current user with full details
-    const user = await prisma.user.findUnique({
+    // Get current user
+    const rawUser = await prisma.user.findUnique({
         where: { email: session.user.email },
         include: {
             orders: {
@@ -37,13 +39,36 @@ export default async function ClientDashboardPage() {
         }
     });
 
-    if (!user) {
+    if (!rawUser) {
         redirect("/login");
     }
 
     // Verify user has CLIENT role
-    if (user.role !== 'CLIENT') {
+    if (rawUser.role !== 'CLIENT') {
         redirect('/admin'); // Redirect admins to admin panel
+    }
+
+    // Convert to strict plain object
+    const user = {
+        name: String(rawUser.name || 'Cliente'),
+        balance: Number(rawUser.balance || 0),
+        id: String(rawUser.id || ''),
+        orders: rawUser.orders.map(order => ({
+            id: String(order.id || ''),
+            createdAt: order.createdAt instanceof Date ? order.createdAt.toISOString() : new Date().toISOString(),
+            status: String(order.status || 'PENDING'),
+            total: order.total ? String(order.total) : '0',
+            items: order.items.map(item => ({
+                id: String(item.id || '')
+            }))
+        })),
+        payments: rawUser.payments.map(payment => ({
+            id: String(payment.id || ''),
+            amount: payment.amount ? String(payment.amount) : '0',
+            createdAt: payment.createdAt instanceof Date ? payment.createdAt.toISOString() : new Date().toISOString(),
+            method: String(payment.method || 'OTROS'),
+            type: String(payment.type || 'GENERAL')
+        }))
     }
 
     const balance = Number(user.balance);

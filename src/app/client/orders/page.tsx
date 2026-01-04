@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { formatCurrency } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function ClientOrdersPage() {
     const session = await auth();
 
@@ -10,17 +12,17 @@ export default async function ClientOrdersPage() {
         redirect("/login");
     }
 
-    const user = await prisma.user.findUnique({
+    const rawUser = await prisma.user.findUnique({
         where: { email: session.user.email }
     });
 
-    if (!user) {
+    if (!rawUser) {
         redirect("/login");
     }
 
     // Get all orders for this client
-    const orders = await prisma.order.findMany({
-        where: { userId: user.id },
+    const rawOrders = await prisma.order.findMany({
+        where: { userId: rawUser.id },
         include: {
             items: {
                 include: {
@@ -36,6 +38,26 @@ export default async function ClientOrdersPage() {
             createdAt: 'desc'
         }
     });
+
+    const orders = rawOrders.map(order => ({
+        id: String(order.id || ''),
+        status: String(order.status || 'PENDING'),
+        total: order.total ? String(order.total) : '0',
+        createdAt: order.createdAt instanceof Date ? order.createdAt.toISOString() : new Date().toISOString(),
+        items: order.items.map(item => ({
+            id: String(item.id || ''),
+            quantity: Number(item.quantity || 0),
+            price: item.price ? String(item.price) : '0',
+            isReady: Boolean(item.isReady),
+            buttonsType: String(item.buttonsType || 'COMMON'),
+            variant: {
+                name: String(item.variant?.name || 'N/A'),
+                product: {
+                    name: String(item.variant?.product?.name || 'Producto sin nombre')
+                }
+            }
+        }))
+    }));
 
     return (
         <div className="space-y-8">

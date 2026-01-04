@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Statement from "@/components/shared/Statement";
 
+export const dynamic = "force-dynamic";
+
 export default async function ClientStatementPage() {
     const session = await auth();
 
@@ -10,7 +12,7 @@ export default async function ClientStatementPage() {
         redirect("/login");
     }
 
-    const user = await prisma.user.findUnique({
+    const rawUser = await prisma.user.findUnique({
         where: { email: session.user.email },
         include: {
             orders: {
@@ -22,18 +24,18 @@ export default async function ClientStatementPage() {
         }
     });
 
-    if (!user) {
+    if (!rawUser) {
         redirect("/login");
     }
 
-    // Combine transactions
-    const orderTransactions = user.orders.map(order => ({
-        id: order.id,
-        date: order.createdAt,
+    // Combine transactions into safe DTOs
+    const orderTransactions = rawUser.orders.map(order => ({
+        id: String(order.id || ''),
+        date: order.createdAt instanceof Date ? order.createdAt.toISOString() : new Date().toISOString(),
         type: 'ORDER' as const,
-        amount: Number(order.total),
-        description: `Pedido #${order.id.slice(0, 8)}`,
-        status: order.status
+        amount: Number(order.total || 0),
+        description: `Pedido #${String(order.id || '').slice(0, 8)}`,
+        status: String(order.status || 'PENDING')
     }));
 
     const paymentTransactions = user.payments.map(payment => ({

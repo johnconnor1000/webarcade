@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { formatCurrency } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function ClientPaymentsPage() {
     const session = await auth();
 
@@ -10,21 +12,30 @@ export default async function ClientPaymentsPage() {
         redirect("/login");
     }
 
-    const user = await prisma.user.findUnique({
+    const rawUser = await prisma.user.findUnique({
         where: { email: session.user.email }
     });
 
-    if (!user) {
+    if (!rawUser) {
         redirect("/login");
     }
 
-    // Get all payments for this client
-    const payments = await prisma.payment.findMany({
-        where: { userId: user.id },
+    // Get all payments for this client with defensive mapping
+    const rawPayments = await prisma.payment.findMany({
+        where: { userId: rawUser.id },
         orderBy: {
             createdAt: 'desc'
         }
     });
+
+    const payments = rawPayments.map(payment => ({
+        id: String(payment.id || ''),
+        amount: payment.amount ? String(payment.amount) : '0',
+        createdAt: payment.createdAt instanceof Date ? payment.createdAt.toISOString() : new Date().toISOString(),
+        method: String(payment.method || 'OTROS'),
+        type: String(payment.type || 'GENERAL'),
+        notes: payment.notes
+    }));
 
     const totalPaid = payments.reduce((sum, payment) => sum + Number(payment.amount), 0);
 
