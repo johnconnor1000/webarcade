@@ -87,12 +87,14 @@ export default async function AdminPaymentsPage() {
                     {payments.map((payment) => (
                         <div key={payment.id} className="bg-slate-900/50 border border-white/5 p-4 rounded-xl flex items-center justify-between">
                             <div>
-                                <h3 className="font-semibold text-white">{payment.user.name}</h3>
-                                <p className="text-sm text-slate-400">{new Date(payment.createdAt).toLocaleDateString()} via {payment.method}</p>
+                                <h3 className="font-semibold text-white">{payment.user?.name || 'Cliente desconocido'}</h3>
+                                <p className="text-sm text-slate-400">
+                                    {payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'Fecha desconocida'} via {payment.method}
+                                </p>
                                 {payment.notes && <p className="text-xs text-slate-500 mt-1">"{payment.notes}"</p>}
                             </div>
                             <div className="text-right">
-                                <span className="text-green-500 font-bold text-lg">+${payment.amount.toString()}</span>
+                                <span className="text-green-500 font-bold text-lg">+${String(payment.amount)}</span>
                             </div>
                         </div>
                     ))}
