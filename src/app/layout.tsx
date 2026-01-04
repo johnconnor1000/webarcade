@@ -32,7 +32,7 @@ export default function RootLayout({
         </div>
         <footer className="py-2 text-center border-t border-white/5 bg-slate-950/50">
           <span className="text-[10px] text-slate-700 font-mono tracking-widest uppercase">
-            Sistema de Pedidos v1.0.4-defensive • {new Date().toLocaleDateString()}
+            Sistema de Pedidos v1.0.5-final-check • {new Date().toLocaleDateString()}
           </span>
         </footer>
       </body>

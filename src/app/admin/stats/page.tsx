@@ -83,7 +83,8 @@ export default async function AdminStatsPage({
                                 {isHistorical ? 'Rendimiento histórico total' : 'Resumen de los últimos 30 días'}
                             </p>
                         </div>
-                        <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.4-defensive</span>
+                        {/* Cache bust: 13:10 */}
+                        <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.5-final-check</span>
                     </div>
 
                     <div className="flex bg-slate-900/50 p-1 rounded-xl border border-white/5 self-start">
