@@ -69,7 +69,7 @@ export default async function ProductionPage() {
                 <div className="flex items-center gap-4">
                     <h1 className="text-3xl font-bold text-white tracking-tight">Producción (Pendientes)</h1>
                     {/* Cache bust: 13:10 */}
-                    <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.10-debug</span>
+                    <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.11-sync</span>
                 </div>
 
                 <div className="bg-slate-900 border border-slate-800 shadow rounded-lg overflow-hidden">

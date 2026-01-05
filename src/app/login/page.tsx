@@ -27,7 +27,9 @@ export default function LoginPage() {
                     </Link>
                     <div className="flex justify-center mb-2">
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-mono tracking-widest uppercase animate-pulse">
-                            v1.0.10-debug
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-mono tracking-widest uppercase animate-pulse">
+                                v1.0.11-sync
+                            </span>
                         </span>
                     </div>
                     <h2 className="text-slate-300 font-medium">Inicia sesión para continuar</h2>
