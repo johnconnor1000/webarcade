@@ -26,6 +26,7 @@ export default async function AdminProductsPage() {
             id: String(variant.id || ''),
             productId: String(variant.productId || ''),
             name: String(variant.name || 'N/A'),
+            imageUrl: variant.imageUrl || null,
             price: Number(variant.price || 0)
         }))
     }));
