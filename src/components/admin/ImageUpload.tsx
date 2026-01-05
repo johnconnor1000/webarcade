@@ -24,19 +24,24 @@ export default function ImageUpload({ currentImageUrl, onUploadComplete, label }
 
             setUploading(true)
 
-            // 1. Optimizar imagen en el cliente (max 800px)
+            // 1. Verificar configuración
+            if (process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder') || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+                throw new Error('Configuración de Supabase incompleta. Verifica las variables de entorno en Vercel.')
+            }
+
+            // 2. Optimizar imagen en el cliente (max 800px)
             const optimizedBlob = await optimizeImage(file)
 
             // Preview local inmediato
             const localPreview = URL.createObjectURL(optimizedBlob)
             setPreview(localPreview)
 
-            // 2. Generar nombre de archivo único
+            // 3. Generar nombre de archivo único
             const fileExt = 'jpg'
             const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`
             const filePath = `products/${fileName}`
 
-            // 3. Subir a Supabase Storage
+            // 4. Subir a Supabase Storage
             const { error: uploadError, data } = await supabase.storage
                 .from('product-images')
                 .upload(filePath, optimizedBlob, {
@@ -46,7 +51,7 @@ export default function ImageUpload({ currentImageUrl, onUploadComplete, label }
 
             if (uploadError) throw uploadError
 
-            // 4. Obtener URL pública
+            // 5. Obtener URL pública
             const { data: { publicUrl } } = supabase.storage
                 .from('product-images')
                 .getPublicUrl(filePath)
@@ -54,7 +59,14 @@ export default function ImageUpload({ currentImageUrl, onUploadComplete, label }
             onUploadComplete(publicUrl)
         } catch (err: any) {
             console.error('Error uploading:', err)
-            setError(err.message || 'Error al subir la imagen')
+            // Error amigable para el usuario
+            let message = 'Error al subir la imagen'
+            if (err.message === 'Failed to fetch') {
+                message = 'Error de conexión: Verifica que las variables NEXT_PUBLIC_SUPABASE_URL y KEY estén en Vercel.'
+            } else if (err.message) {
+                message = err.message
+            }
+            setError(message)
             setPreview(currentImageUrl || null)
         } finally {
             setUploading(false)

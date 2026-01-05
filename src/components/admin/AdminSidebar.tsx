@@ -50,7 +50,9 @@ export function AdminSidebar({
                     <NextLink href="/admin" className="text-lg font-bold tracking-tight text-white">
                         Arcade
                     </NextLink>
-                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-600 font-mono leading-none">v1.0.14-uploads</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-mono tracking-widest uppercase animate-pulse">
+                        v1.0.17-fixed-images
+                    </span>
                 </div>
                 <button
                     onClick={toggleSidebar}
