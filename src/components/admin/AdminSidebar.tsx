@@ -50,7 +50,7 @@ export function AdminSidebar({
                     <NextLink href="/admin" className="text-lg font-bold tracking-tight text-white">
                         Arcade
                     </NextLink>
-                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-600 font-mono leading-none">v1.0.11-sync</span>
+                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-600 font-mono leading-none">v1.0.12-fixed-db</span>
                 </div>
                 <button
                     onClick={toggleSidebar}
@@ -86,7 +86,7 @@ export function AdminSidebar({
                     <NextLink href="/admin" className="text-xl font-bold tracking-tight text-white">
                         Arcade
                     </NextLink>
-                    <span className="ml-2 text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-600 font-mono leading-none">v1.0.11-sync</span>
+                    <span className="ml-2 text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-600 font-mono leading-none">v1.0.12-fixed-db</span>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto mt-16 lg:mt-0">
