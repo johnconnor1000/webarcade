@@ -223,7 +223,11 @@ export default function ProductCard({ product }: ProductCardProps) {
                     className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-12 animate-in fade-in zoom-in duration-300"
                     onClick={() => setIsLightboxOpen(false)}
                 >
-                    <button className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors">
+                    <button
+                        onClick={() => setIsLightboxOpen(false)}
+                        title="Cerrar vista previa"
+                        className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
