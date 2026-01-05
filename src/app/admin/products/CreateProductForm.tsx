@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createProduct } from './actions'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 export default function CreateProductForm() {
     const [variants, setVariants] = useState([{ name: 'Estándar', imageUrl: '' }])
@@ -78,13 +79,14 @@ export default function CreateProductForm() {
                                         className="w-full bg-slate-900 border border-white/10 rounded px-2 py-1 text-sm text-white"
                                         required
                                     />
+                                    <ImageUpload
+                                        currentImageUrl={v.imageUrl}
+                                        onUploadComplete={(url) => updateVariant(i, 'imageUrl', url)}
+                                    />
                                     <input
-                                        type="text"
+                                        type="hidden"
                                         name={`variant_image_${i}`}
-                                        value={v.imageUrl}
-                                        onChange={(e) => updateVariant(i, 'imageUrl', e.target.value)}
-                                        placeholder="URL Imagen (opcional)"
-                                        className="w-full bg-slate-950 border border-white/5 rounded px-2 py-1 text-[10px] text-slate-400 focus:text-white transition-colors"
+                                        value={v.imageUrl || ''}
                                     />
                                 </div>
 

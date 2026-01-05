@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { updateProduct } from './actions'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 interface Variant {
     id?: string
@@ -177,12 +178,14 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                                             className="w-full bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 transition-colors"
                                             required
                                         />
+                                        <ImageUpload
+                                            currentImageUrl={v.imageUrl}
+                                            onUploadComplete={(url) => updateVariant(i, 'imageUrl', url)}
+                                        />
                                         <input
+                                            type="hidden"
+                                            name={`variant_image_${i}`}
                                             value={v.imageUrl || ''}
-                                            onChange={e => updateVariant(i, 'imageUrl', e.target.value)}
-                                            placeholder="URL Imagen (opcional)"
-                                            title="URL de la imagen de la variante"
-                                            className="w-full bg-slate-950 border border-white/5 rounded-lg px-3 py-1 text-[10px] text-slate-500 outline-none focus:text-white transition-colors"
                                         />
                                     </div>
 
