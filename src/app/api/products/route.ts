@@ -48,6 +48,7 @@ export async function GET() {
                     id: String(variant.id || ''),
                     productId: String(variant.productId || ''),
                     name: String(variant.name || 'N/A'),
+                    imageUrl: variant.imageUrl,
                     price: basePrice.toFixed(2)
                 }))
             };

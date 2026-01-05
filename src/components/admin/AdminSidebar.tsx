@@ -51,7 +51,7 @@ export function AdminSidebar({
                         Arcade
                     </NextLink>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-mono tracking-widest uppercase animate-pulse">
-                        v1.0.17-fixed-images
+                        v1.0.18-final-sync
                     </span>
                 </div>
                 <button
@@ -88,7 +88,7 @@ export function AdminSidebar({
                     <NextLink href="/admin" className="text-xl font-bold tracking-tight text-white">
                         Arcade
                     </NextLink>
-                    <span className="ml-2 text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.17-fixed-images</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-500 font-mono leading-none">v1.0.18-final-sync</span>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto mt-16 lg:mt-0">
@@ -107,7 +107,7 @@ export function AdminSidebar({
                             {user?.name?.[0] || "A"}
                         </div>
                         <div className="min-w-0">
-                            <h2 className="text-2xl font-bold text-white mb-2">Error de Estadísticas (v1.0.17-fixed-images)</h2>
+                            <p className="text-sm font-medium text-white truncate">{user?.name || "Admin"}</p>
                             <p className="text-xs text-slate-500 truncate">{user?.email}</p>
                         </div>
                     </div>
