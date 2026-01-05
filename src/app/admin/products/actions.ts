@@ -16,7 +16,8 @@ export async function createProduct(formData: FormData) {
     let i = 0
     while (formData.has(`variant_name_${i}`)) {
         variants.push({
-            name: formData.get(`variant_name_${i}`) as string
+            name: formData.get(`variant_name_${i}`) as string,
+            imageUrl: formData.get(`variant_image_${i}`) as string || null
         })
         i++
     }
@@ -59,7 +60,8 @@ export async function updateProduct(formData: FormData) {
     while (formData.has(`variant_name_${i}`)) {
         variants.push({
             id: formData.get(`variant_id_${i}`) as string || undefined,
-            name: formData.get(`variant_name_${i}`) as string
+            name: formData.get(`variant_name_${i}`) as string,
+            imageUrl: formData.get(`variant_image_${i}`) as string || null
         })
         i++
     }
@@ -104,13 +106,17 @@ export async function updateProduct(formData: FormData) {
         if (v.id) {
             await prisma.productVariant.update({
                 where: { id: v.id },
-                data: { name: v.name }
+                data: {
+                    name: v.name,
+                    imageUrl: v.imageUrl
+                }
             })
 
         } else {
             await prisma.productVariant.create({
                 data: {
                     name: v.name,
+                    imageUrl: v.imageUrl,
                     productId: id
                 }
 

@@ -4,10 +4,10 @@ import { useState } from 'react'
 import { createProduct } from './actions'
 
 export default function CreateProductForm() {
-    const [variants, setVariants] = useState([{ name: 'Estándar' }])
+    const [variants, setVariants] = useState([{ name: 'Estándar', imageUrl: '' }])
 
     const addVariant = () => {
-        setVariants([...variants, { name: '' }])
+        setVariants([...variants, { name: '', imageUrl: '' }])
     }
 
 
@@ -16,9 +16,9 @@ export default function CreateProductForm() {
         setVariants(variants.filter((_, i) => i !== index))
     }
 
-    const updateVariant = (index: number, name: string) => {
+    const updateVariant = (index: number, field: 'name' | 'imageUrl', value: string) => {
         const newVariants = [...variants]
-        newVariants[index] = { ...newVariants[index], name }
+        newVariants[index] = { ...newVariants[index], [field]: value }
         setVariants(newVariants)
     }
 
@@ -68,15 +68,23 @@ export default function CreateProductForm() {
                     <div className="space-y-3">
                         {variants.map((v, i) => (
                             <div key={i} className="flex gap-2 items-start">
-                                <div className="flex-1">
+                                <div className="flex-1 space-y-2">
                                     <input
                                         type="text"
                                         name={`variant_name_${i}`}
                                         value={v.name}
-                                        onChange={(e) => updateVariant(i, e.target.value)}
+                                        onChange={(e) => updateVariant(i, 'name', e.target.value)}
                                         placeholder="Nombre (ej. XL)"
                                         className="w-full bg-slate-900 border border-white/10 rounded px-2 py-1 text-sm text-white"
                                         required
+                                    />
+                                    <input
+                                        type="text"
+                                        name={`variant_image_${i}`}
+                                        value={v.imageUrl}
+                                        onChange={(e) => updateVariant(i, 'imageUrl', e.target.value)}
+                                        placeholder="URL Imagen (opcional)"
+                                        className="w-full bg-slate-950 border border-white/5 rounded px-2 py-1 text-[10px] text-slate-400 focus:text-white transition-colors"
                                     />
                                 </div>
 

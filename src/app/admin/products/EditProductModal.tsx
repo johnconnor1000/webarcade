@@ -6,6 +6,7 @@ import { updateProduct } from './actions'
 interface Variant {
     id?: string
     name: string
+    imageUrl?: string | null
     price?: string | number
 
 }
@@ -37,7 +38,7 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
     const [error, setError] = useState<string | null>(null)
 
     const addVariant = () => {
-        setVariants([...variants, { name: '' }])
+        setVariants([...variants, { name: '', imageUrl: '' }])
     }
 
 
@@ -46,9 +47,9 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
         setVariants(variants.filter((_, i) => i !== index))
     }
 
-    const updateVariant = (index: number, name: string) => {
+    const updateVariant = (index: number, field: 'name' | 'imageUrl', value: string) => {
         const newVariants = [...variants]
-        newVariants[index] = { ...newVariants[index], name }
+        newVariants[index] = { ...newVariants[index], [field]: value }
         setVariants(newVariants)
     }
 
@@ -69,7 +70,7 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
         variants.forEach((v, i) => {
             if (v.id) formData.append(`variant_id_${i}`, v.id)
             formData.append(`variant_name_${i}`, v.name)
-
+            formData.append(`variant_image_${i}`, v.imageUrl || '')
         })
 
         startTransition(async () => {
@@ -167,14 +168,23 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                         <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                             {variants.map((v, i) => (
                                 <div key={i} className="flex gap-2 items-start">
-                                    <input
-                                        value={v.name}
-                                        onChange={e => updateVariant(i, e.target.value)}
-                                        placeholder="Nombre"
-                                        title="Nombre de la variante"
-                                        className="flex-1 bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 transition-colors"
-                                        required
-                                    />
+                                    <div className="flex-1 space-y-2">
+                                        <input
+                                            value={v.name}
+                                            onChange={e => updateVariant(i, 'name', e.target.value)}
+                                            placeholder="Nombre"
+                                            title="Nombre de la variante"
+                                            className="w-full bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 transition-colors"
+                                            required
+                                        />
+                                        <input
+                                            value={v.imageUrl || ''}
+                                            onChange={e => updateVariant(i, 'imageUrl', e.target.value)}
+                                            placeholder="URL Imagen (opcional)"
+                                            title="URL de la imagen de la variante"
+                                            className="w-full bg-slate-950 border border-white/5 rounded-lg px-3 py-1 text-[10px] text-slate-500 outline-none focus:text-white transition-colors"
+                                        />
+                                    </div>
 
                                     {variants.length > 1 && (
                                         <button
