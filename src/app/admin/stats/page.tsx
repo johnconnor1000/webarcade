@@ -84,7 +84,7 @@ export default async function AdminStatsPage({
                             </p>
                         </div>
                         {/* Cache bust: 13:10 */}
-                        <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.10-debug</span>
+                        <span className="text-[10px] text-slate-700 bg-slate-900 border border-white/5 px-2 py-0.5 rounded font-mono">v1.0.11-sync</span>
                     </div>
 
                     <div className="flex bg-slate-900/50 p-1 rounded-xl border border-white/5 self-start">
@@ -235,9 +235,9 @@ export default async function AdminStatsPage({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Error de Estadísticas (v1.0.10-debug)</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Error de Estadísticas (v1.0.11-sync)</h2>
                 <p className="text-slate-400 max-w-md mx-auto mb-8 text-xs font-mono bg-black/20 p-2 rounded">
-                    {error instanceof Error ? error.message : "Error desconocido"}
+                    {error instanceof Error ? error.message : "Error de base de datos o esquema out-of-sync."}
                 </p>
                 <div className="flex justify-center gap-4">
                     <Link href="/admin/stats" className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors font-medium">
